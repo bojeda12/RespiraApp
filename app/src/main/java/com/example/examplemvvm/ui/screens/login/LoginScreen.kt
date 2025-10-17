@@ -1,10 +1,9 @@
-package com.example.examplemvvm.login.ui.screens.login
+package com.example.examplemvvm.ui.theme.login.ui.screens.login
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
@@ -27,10 +26,12 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+
 import androidx.compose.ui.unit.sp
 import com.example.examplemvvm.R
 /*
@@ -48,6 +49,7 @@ fun LoginScreen(viewModel: LoginViewModel){//Definimos el view model en la raiz 
 
     )
     {
+
         Box(Modifier
             .fillMaxSize()
             .padding(horizontal = 45.dp)
@@ -61,10 +63,10 @@ fun LoginScreen(viewModel: LoginViewModel){//Definimos el view model en la raiz 
 
 @Composable
 fun Login(modifier: Modifier,viewModel: LoginViewModel) {
-
-    val email : String by viewModel.email.observeAsState(initial = "")//Cremaos el evento que observa los cambios con el observer state
-    val password : String by viewModel.password.observeAsState(initial = "")
-    val loginEnable : Boolean by viewModel.loginEnable.observeAsState(initial = false)
+    val state by viewModel.state.observeAsState(LoginState())
+    //val email : String by viewModel.email.observeAsState(initial = "")//Cremaos el evento que observa los cambios con el observer state
+   // val password : String by viewModel.password.observeAsState(initial = "")
+    //val loginEnable : Boolean by viewModel.loginEnable.observeAsState(initial = false)
 
     Column(modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.Top,
@@ -73,13 +75,13 @@ fun Login(modifier: Modifier,viewModel: LoginViewModel) {
      {
         HeaderImage(modifier = Modifier.align(Alignment.CenterHorizontally))
         Spacer(modifier= Modifier.padding(10.dp))
-        EmailField(email,{viewModel.onLoginChange(it, password)})
-        Spacer(modifier= Modifier.padding(18.dp))
-        PasswordField(password, {viewModel.onLoginChange(email,it)})
-        Spacer(modifier= Modifier.padding(4.dp))
+        EmailField(state.email) { viewModel.onEvent(LoginEvent.EmailChanged(it)) }
+         Spacer(modifier= Modifier.padding(18.dp))
+        PasswordField(state.password) { viewModel.onEvent(LoginEvent.PasswordChanged(it)) }
+         Spacer(modifier= Modifier.padding(4.dp))
         ForgotPassword(Modifier.align(Alignment.End))
         Spacer(modifier= Modifier.padding(10.dp))
-        LoginButton(loginEnable){viewModel.onLoginSelected()}
+        LoginButton(state.isLoginEnabled){viewModel.onEvent(LoginEvent.LoginClicked)}
         Spacer(modifier= Modifier.padding(4.dp))
         Registrate()
     }
@@ -88,7 +90,7 @@ fun Login(modifier: Modifier,viewModel: LoginViewModel) {
 @Composable
 fun Registrate() {
     Text(
-        text = "No tienes una cuenta, registrte ahora",
+        text = "¿No tienes una cuenta?, registrte ahora",
         modifier = Modifier.clickable{},
         fontSize = 12.sp,
         fontWeight = FontWeight.Bold,
