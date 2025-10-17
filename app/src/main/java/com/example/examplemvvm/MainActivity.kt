@@ -11,8 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.examplemvvm.ui.theme.ExampleMVVMTheme
-import com.example.examplemvvm.login.ui.LoginScreen
-import com.example.examplemvvm.login.ui.LoginViewModel
+import com.example.examplemvvm.login.ui.screens.login.LoginScreen
+import com.example.examplemvvm.login.ui.screens.login.LoginViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

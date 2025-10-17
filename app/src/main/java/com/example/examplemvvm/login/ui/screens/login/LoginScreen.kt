@@ -1,4 +1,4 @@
-package com.example.examplemvvm.login.ui
+package com.example.examplemvvm.login.ui.screens.login
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize

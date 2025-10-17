@@ -1,10 +1,9 @@
-package com.example.examplemvvm.login.ui
+package com.example.examplemvvm.login.ui.screens.login
 
 import android.util.Patterns
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import org.intellij.lang.annotations.Pattern
 
 /*
     Debemos de importar las librerias necesarias para poder trabajar con la arquitecruta MVVM
