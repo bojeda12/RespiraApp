@@ -2,6 +2,9 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+
+    //Agregamos aqui para la navegacion
+    alias(libs.plugins.jetbrainsKotlinSerialization)
     id("kotlin-kapt")
 }
 
@@ -60,6 +63,11 @@ dependencies {
     implementation("androidx.fragment:fragment-ktx:1.8.9")
     //Activity
     implementation("androidx.activity:activity-ktx:1.11.0")
+
+    //Agregamos aqui para la navegacion
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.kotlinx.serialization.json)
+
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

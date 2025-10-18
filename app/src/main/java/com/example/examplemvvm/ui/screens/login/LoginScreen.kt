@@ -33,6 +33,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.examplemvvm.R
 /*
 * Creamos el vie model en el login screen y podemos pasar esos parametros en donde los vayamos a utilziar
@@ -40,7 +41,10 @@ import com.example.examplemvvm.R
 
 
 @Composable
-fun LoginScreen(viewModel: LoginViewModel){//Definimos el view model en la raiz de todos los componentes ya que de aqui parte o heredan los demas esta caracateristica del view model
+fun LoginScreen(viewModel: LoginViewModel = viewModel()){
+    /*Definimos el view model en la raiz de todos los componentes ya que de aqui
+    parte o heredan los demas esta caracateristica del view model, tambien se instancia o inicializa
+    aqui adentro para no tener que inicializarlo en el mainActivity*/
     Box(Modifier
         .fillMaxSize()
         .padding(top = 100.dp)
@@ -88,13 +92,13 @@ fun Login(modifier: Modifier,viewModel: LoginViewModel) {
 }
 
 @Composable
-fun Registrate() {
+fun Registrate(modifier: Modifier) {
     Text(
         text = "¿No tienes una cuenta?, registrte ahora",
-        modifier = Modifier.clickable{},
+        modifier = modifier.clickable{},
         fontSize = 12.sp,
         fontWeight = FontWeight.Bold,
-        color = Color(0xFF41837B))
+        color = Color(0xFF41837B),)
 }
 
 

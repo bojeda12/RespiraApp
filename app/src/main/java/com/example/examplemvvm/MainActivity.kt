@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.examplemvvm.navigation.NavigationWrapper
 import com.example.examplemvvm.ui.theme.ExampleMVVMTheme
 import com.example.examplemvvm.ui.theme.login.ui.screens.login.LoginScreen
 import com.example.examplemvvm.ui.theme.login.ui.screens.login.LoginViewModel
@@ -24,7 +25,7 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.fillMaxSize(),
                         color = Color(0xFF1A78C5)
                     ) {
-                        LoginScreen(LoginViewModel()) //Creamos la instancia del view model
+                        NavigationWrapper() //Creamos la instancia del view model
                     }
                 }
             }
@@ -34,7 +35,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Preview() {
     ExampleMVVMTheme{
-        LoginScreen(LoginViewModel())
+        LoginScreen()
     }
 }
 
