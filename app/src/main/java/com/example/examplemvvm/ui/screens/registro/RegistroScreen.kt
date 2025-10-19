@@ -12,16 +12,23 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.TimePickerState
+import androidx.compose.material3.TimePickerColors
+import androidx.compose.material3.TimePickerDefaults
+import androidx.compose.material3.TimePickerLayoutType
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -35,6 +42,7 @@ import com.example.examplemvvm.ui.screens.componentes.Logo
 import com.example.examplemvvm.ui.screens.componentes.TextFieldCreated1
 import com.example.examplemvvm.ui.screens.componentes.TextFields
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.painter.Painter
 
 @Preview(showSystemUi = true)
 @Composable
@@ -45,6 +53,7 @@ fun RegistroScreen(viewModel: RegistroViewModel = RegistroViewModel()) {
 
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Registro(modifier: Modifier, viewModel: RegistroViewModel) {
     val state by viewModel.state.observeAsState(RegistroState())
@@ -83,14 +92,14 @@ fun Registro(modifier: Modifier, viewModel: RegistroViewModel) {
             "Confirma contrasena",
             "Confirma tu contrasena",
         ) { viewModel.onEvent(RegistroEvent.confirmarContrasenaChanged(it)) }
-        Spacer(modifier = Modifier.padding(4.dp))
+        Spacer(modifier = Modifier.padding(8.dp))
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 8.dp),
             horizontalArrangement = Arrangement.Start
         ) {
-            Label1(modifier = modifier)
+            Label1(modifier = modifier, texto = "¿Como te sintes el dia de hoy?")
 
         }
         Row(
@@ -101,22 +110,32 @@ fun Registro(modifier: Modifier, viewModel: RegistroViewModel) {
                 .background(color = Color.White),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            FloatingActionButtonExample()
-            FloatingActionButtonExample()
-            FloatingActionButtonExample()
-            FloatingActionButtonExample()
-            FloatingActionButtonExample()
+            FloatingActionButtonExample(imagen = painterResource(id = R.drawable.sadface))
+            FloatingActionButtonExample(imagen = painterResource(id = R.drawable.sad))
+            FloatingActionButtonExample(imagen = painterResource(id = R.drawable.confused))
+            FloatingActionButtonExample(imagen = painterResource(id = R.drawable.happy))
+            FloatingActionButtonExample(imagen = painterResource(id = R.drawable.happyface))
         }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start
+        ) {
+            Label1(modifier = modifier, texto = "Elige un horario para respirar")
 
-
+        }
+        MyTimePicker()
+        Spacer(Modifier.height(30.dp))
+        RegistrateButton()
+        Spacer(Modifier.height(30.dp))
     }
 
 }
 
 @Composable
-fun Label1(modifier: Modifier) {
+fun Label1(modifier: Modifier, texto: String) {
     Text(
-        text = "Como te sintes el dia de hoy",
+        text = texto,
         fontSize = 20.sp,
         fontWeight = FontWeight.Bold,
         color = Color(0xFF41837B),
@@ -125,9 +144,46 @@ fun Label1(modifier: Modifier) {
 }
 
 @Composable
-fun FloatingActionButtonExample() {
-    FloatingActionButton(onClick = { print("Hello") }) {
-        Icon(Icons.Filled.Edit, "Floating action button.")
+fun FloatingActionButtonExample(imagen: Painter) {
+    FloatingActionButton(onClick = { }) {
+        Image(
+            painter = imagen,
+            contentDescription = "Botón de acción",
+            modifier = Modifier.size(24.dp) // ajusta el tamaño del ícono
+        )
+    }
+}
+
+@Composable
+@ExperimentalMaterial3Api
+fun MyTimePicker() {
+    val state = rememberTimePickerState()
+    TimePicker(
+        state = state,
+        modifier = Modifier.padding(15.dp),
+        colors = TimePickerDefaults.colors(),
+        layoutType = TimePickerDefaults.layoutType()
+    )
+    Text(text = "Hora seleccionada H:M = ${state.hour} : ${state.minute}")
+}
+
+@Composable
+fun RegistrateButton(modifier: Modifier = Modifier) {
+    Button(
+        onClick = {  },
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp),
+        colors = ButtonDefaults.buttonColors
+            (
+            containerColor = Color(0xFF359B94),
+            disabledContainerColor = Color(0xFF347771),
+            contentColor = Color(0xFFFFFFFF),
+            disabledContentColor = Color(0xFFFFFFFF)
+        ),
+    )
+    {
+        Text(text = "Registrate")
     }
 }
 
