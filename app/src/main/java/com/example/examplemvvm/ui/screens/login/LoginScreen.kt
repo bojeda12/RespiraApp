@@ -1,6 +1,4 @@
 package com.example.examplemvvm.ui.theme.login.ui.screens.login
-
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -24,12 +22,15 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.examplemvvm.ui.screens.componenetes.Container
-import com.example.examplemvvm.ui.screens.componenetes.Logo
+import com.example.examplemvvm.ui.screens.componentes.Container
+import com.example.examplemvvm.ui.screens.componentes.Logo
+import com.example.examplemvvm.ui.screens.componentes.TextFields
+import com.example.examplemvvm.R
 
 /*
 * Creamos el vie model en el login screen y podemos pasar esos parametros en donde los vayamos a utilziar
@@ -88,9 +89,10 @@ fun Login(modifier: Modifier, viewModel: LoginViewModel, navegarRegistro: () -> 
         horizontalAlignment = Alignment.CenterHorizontally
     )
     {
-        Logo(modifier = Modifier.align(Alignment.CenterHorizontally))
+        Logo(modifier = Modifier.align(Alignment.CenterHorizontally), imagen = painterResource(id = R.drawable.respira1))
         Spacer(modifier = Modifier.padding(10.dp))
-        EmailField(state.email) { viewModel.onEvent(LoginEvent.EmailChanged(it)) }
+        //EmailField(state.email) { viewModel.onEvent(LoginEvent.EmailChanged(it)) }
+        TextFields(state.email,"Email","Email"){ viewModel.onEvent(LoginEvent.EmailChanged(it)) }
         Spacer(modifier = Modifier.padding(18.dp))
         PasswordField(state.password) { viewModel.onEvent(LoginEvent.PasswordChanged(it)) }
         Spacer(modifier = Modifier.padding(4.dp))
