@@ -44,18 +44,35 @@ import com.example.examplemvvm.ui.screens.componentes.TextFields
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.painter.Painter
 
-@Preview(showSystemUi = true)
+
 @Composable
-fun RegistroScreen(viewModel: RegistroViewModel = RegistroViewModel()) {
-    Container() {
-        Registro(modifier = Modifier, viewModel = viewModel)
+fun RegistroScreen(
+    viewModel: RegistroViewModel = RegistroViewModel(),
+    navegarToDashboard: () -> Unit
+) {
+    Container(
+        showBackButton = true,
+        showHomeButton = false,
+        onBackClick = {},
+        onHomeClick = {},
+        encabezado = "REGISTRATE",
+        showEncabezado = true
+    ) {
+        Registro(
+            modifier = Modifier,
+            viewModel = viewModel,
+            navegarToDashboard = navegarToDashboard
+        )
     }
 
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Registro(modifier: Modifier, viewModel: RegistroViewModel) {
+fun Registro(
+    modifier: Modifier, viewModel: RegistroViewModel,
+    navegarToDashboard: () -> Unit
+) {
     val state by viewModel.state.observeAsState(RegistroState())
     Column(
         modifier = modifier
@@ -126,7 +143,7 @@ fun Registro(modifier: Modifier, viewModel: RegistroViewModel) {
         }
         MyTimePicker()
         Spacer(Modifier.height(30.dp))
-        RegistrateButton()
+        RegistrateButton(onClick = navegarToDashboard)
         Spacer(Modifier.height(30.dp))
     }
 
@@ -168,9 +185,9 @@ fun MyTimePicker() {
 }
 
 @Composable
-fun RegistrateButton(modifier: Modifier = Modifier) {
+fun RegistrateButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
     Button(
-        onClick = {  },
+        onClick = onClick,
         modifier = Modifier
             .fillMaxWidth()
             .height(48.dp),

@@ -7,6 +7,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.examplemvvm.ui.screens.dashboard.DashboardScreen
+
 import com.example.examplemvvm.ui.screens.registro.RegistroScreen
 import com.example.examplemvvm.ui.theme.login.ui.screens.login.LoginScreen
 
@@ -15,13 +17,34 @@ import com.example.examplemvvm.ui.theme.login.ui.screens.login.LoginScreen
 fun NavigationWrapper(){
     val navController: NavHostController = rememberNavController()
     NavHost(navController = navController, startDestination = Screens.LOGIN){
-        composable(Screens.LOGIN) { LoginScreen(navegarRegistro = {
-            navController.navigate(Screens.REGISTRO)
+        composable(Screens.LOGIN) {
+            LoginScreen(navegarRegistro = {
+            navController.navigate(Screens.REGISTRO){
+                /*permite borrar el stack de navegacion y solo poner al que debemos volver*/
+                popUpTo(Screens.LOGIN){inclusive = false}
+            }
         }) }
         composable(Screens.REGISTRO){
-            RegistroScreen()
+            RegistroScreen(navegarToDashboard = {
+                navController.navigate(Screens.DASHBOARD)
+            })
         }
+        composable(Screens.DASHBOARD) {
+            DashboardScreen()
+        }
+        composable(Screens.RUTINAS) {
 
+        }
+        composable(Screens.ESTADOANIMO) {
+
+        }
+        composable(Screens.RESPIRACION) {
+
+        }
+        composable(Screens.CONFIGURACION) {
+
+        }
+        composable(Screens.HISTORIAL) {  }
     }
    // Creamos un fichero llamado screens en donde se almacenaran las panrallas en forma de objetos
 }

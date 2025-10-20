@@ -1,4 +1,5 @@
 package com.example.examplemvvm.ui.theme.login.ui.screens.login
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -38,27 +39,13 @@ import com.example.examplemvvm.R
 
 
 @Composable
-fun LoginScreen(viewModel: LoginViewModel = viewModel(), navegarRegistro: () -> Unit) {
+fun LoginScreen(
+    viewModel: LoginViewModel = viewModel(),
+    navegarRegistro: () -> Unit
+) {
     /*Definimos el view model en la raiz de todos los componentes ya que de aqui
     parte o heredan los demas esta caracateristica del view model, tambien se instancia o inicializa
     aqui adentro para no tener que inicializarlo en el mainActivity*/
-    /*Box(Modifier
-        .fillMaxSize()
-        .padding(top = 100.dp)
-        .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 30.dp))
-        .background(MaterialTheme.colorScheme.background)
-
-    )
-    {
-
-        Box(Modifier
-            .fillMaxSize()
-            .padding(horizontal = 45.dp)
-        ){
-            Login(Modifier.align(Alignment.Center),viewModel,navegarRegistro = navegarRegistro)
-        }
-
-    }*/
 
     // usamos solo el Container reutilizable para la "card" blanca
     Container() {
@@ -75,7 +62,11 @@ fun LoginScreen(viewModel: LoginViewModel = viewModel(), navegarRegistro: () -> 
 }
 
 @Composable
-fun Login(modifier: Modifier, viewModel: LoginViewModel, navegarRegistro: () -> Unit) {
+fun Login(
+    modifier: Modifier,
+    viewModel: LoginViewModel,
+    navegarRegistro: () -> Unit
+) {
     val state by viewModel.state.observeAsState(LoginState())
     //val email : String by viewModel.email.observeAsState(initial = "")//Cremaos el evento que observa los cambios con el observer state
     // val password : String by viewModel.password.observeAsState(initial = "")
@@ -89,10 +80,13 @@ fun Login(modifier: Modifier, viewModel: LoginViewModel, navegarRegistro: () -> 
         horizontalAlignment = Alignment.CenterHorizontally
     )
     {
-        Logo(modifier = Modifier.align(Alignment.CenterHorizontally), imagen = painterResource(id = R.drawable.respira1))
+        Logo(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            imagen = painterResource(id = R.drawable.respira1)
+        )
         Spacer(modifier = Modifier.padding(10.dp))
         //EmailField(state.email) { viewModel.onEvent(LoginEvent.EmailChanged(it)) }
-        TextFields(state.email,"Email","Email"){ viewModel.onEvent(LoginEvent.EmailChanged(it)) }
+        TextFields(state.email, "Email", "Email") { viewModel.onEvent(LoginEvent.EmailChanged(it)) }
         Spacer(modifier = Modifier.padding(18.dp))
         PasswordField(state.password) { viewModel.onEvent(LoginEvent.PasswordChanged(it)) }
         Spacer(modifier = Modifier.padding(4.dp))
