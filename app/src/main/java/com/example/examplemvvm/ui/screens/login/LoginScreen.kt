@@ -1,5 +1,6 @@
 package com.example.examplemvvm.ui.theme.login.ui.screens.login
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -20,6 +21,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -41,7 +43,8 @@ import com.example.examplemvvm.R
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = viewModel(),
-    navegarRegistro: () -> Unit
+    navegarRegistro: () -> Unit,
+    navegarDashboard: () -> Unit
 ) {
     /*Definimos el view model en la raiz de todos los componentes ya que de aqui
     parte o heredan los demas esta caracateristica del view model, tambien se instancia o inicializa
@@ -54,7 +57,8 @@ fun LoginScreen(
         Login(
             modifier = Modifier.align(Alignment.CenterHorizontally),
             viewModel = viewModel,
-            navegarRegistro = navegarRegistro
+            navegarRegistro = navegarRegistro,
+            navegarDashboard = navegarDashboard
         )
     }
 
@@ -65,8 +69,20 @@ fun LoginScreen(
 fun Login(
     modifier: Modifier,
     viewModel: LoginViewModel,
-    navegarRegistro: () -> Unit
+    navegarRegistro: () -> Unit,
+    navegarDashboard: () -> Unit
 ) {
+    // Escuchar eventos de navegación
+    LaunchedEffect(Unit) {
+        viewModel.navigationEvent.collect { event ->
+            Log.d("LoginScreen", "Evento recibido: $event")
+            when (event) {
+                is LoginViewModel.NavigationTarget.Registro -> navegarRegistro()
+                is LoginViewModel.NavigationTarget.Dashboard -> navegarDashboard()
+            }
+        }
+    }
+
     val state by viewModel.state.observeAsState(LoginState())
     //val email : String by viewModel.email.observeAsState(initial = "")//Cremaos el evento que observa los cambios con el observer state
     // val password : String by viewModel.password.observeAsState(initial = "")
@@ -92,9 +108,12 @@ fun Login(
         Spacer(modifier = Modifier.padding(4.dp))
         ForgotPassword(Modifier.align(Alignment.End))
         Spacer(modifier = Modifier.padding(10.dp))
-        LoginButton(state.isLoginEnabled) { viewModel.onEvent(LoginEvent.LoginClicked) }
+        LoginButton(state.isLoginEnabled) {
+            Log.d("LoginScreen", "Botón presionado")
+            viewModel.onEvent(LoginEvent.LoginClicked)
+        }
         Spacer(modifier = Modifier.padding(4.dp))
-        Registrate(modifier = Modifier, onClick = navegarRegistro)
+        Registrate(modifier = Modifier){viewModel.onEvent(LoginEvent.RegistrateClicked)}
     }
 }
 
@@ -113,7 +132,7 @@ fun Registrate(modifier: Modifier, onClick: () -> Unit) {
 @Composable
 fun LoginButton(loginEnable: Boolean, onLoginSelected: () -> Unit) {
     Button(
-        onClick = { onLoginSelected },
+        onClick = { onLoginSelected() },
         modifier = Modifier
             .fillMaxWidth()
             .height(48.dp),
@@ -156,27 +175,6 @@ fun PasswordField(password: String, onTextFieldChanged: (String) -> Unit) {
         colors = TextFieldDefaults.colors(
             focusedTextColor = Color(0xFF41837B),
             unfocusedTextColor = Color(0xFF57C4BC),
-            focusedContainerColor = Color.Transparent,
-            unfocusedContainerColor = Color.Transparent,
-        )
-    )
-}
-
-@Composable
-fun EmailField(email: String, onTextFieldChanged: (String) -> Unit) {
-
-    TextField(
-        value = email,
-        onValueChange = { onTextFieldChanged(it) },
-        modifier = Modifier.fillMaxWidth(),
-        label = { Text("Email") },
-        placeholder = { Text(text = "Email") },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-        singleLine = true,
-        maxLines = 1,
-        colors = TextFieldDefaults.colors(
-            focusedTextColor = Color(0xFF367A72),
-            unfocusedTextColor = Color(0xFF132F2C),
             focusedContainerColor = Color.Transparent,
             unfocusedContainerColor = Color.Transparent,
         )

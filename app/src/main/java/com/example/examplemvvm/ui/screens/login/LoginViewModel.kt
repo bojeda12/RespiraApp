@@ -1,9 +1,14 @@
 package com.example.examplemvvm.ui.theme.login.ui.screens.login
 
 import android.util.Patterns
+import androidx.compose.runtime.MutableState
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 
 /*
     Debemos de importar las librerias necesarias para poder trabajar con la arquitecruta MVVM
@@ -22,6 +27,8 @@ import androidx.lifecycle.ViewModel
 class LoginViewModel: ViewModel() {
     private val _state = MutableLiveData(LoginState())
     val state: LiveData<LoginState> = _state
+    private val _navigationEvent = MutableSharedFlow<NavigationTarget>()
+    val navigationEvent = _navigationEvent.asSharedFlow()
 
     fun onEvent(event: LoginEvent){
         val current = _state.value ?: LoginState()
@@ -37,42 +44,26 @@ class LoginViewModel: ViewModel() {
                 val isValid = isValidEmail(current.email) && isValidPassword(newPassword)
                 _state.value = current.copy(password = newPassword,isLoginEnabled = isValid)
             }
-
+            //Aqui manejamos la navegacion
             is LoginEvent.LoginClicked -> {
-
+                viewModelScope.launch {
+                    _navigationEvent.emit(NavigationTarget.Dashboard)
+                }
+            }
+            is LoginEvent.RegistrateClicked->{
+                viewModelScope.launch {
+                    _navigationEvent.emit(NavigationTarget.Registro)
+                }
             }
         }
 
     }
+    sealed class NavigationTarget{
+        object Registro : NavigationTarget()
+        object Dashboard : NavigationTarget()
+    }
     private fun isValidPassword(password:String):Boolean = password.length > 6
     private fun isValidEmail(email:String): Boolean = Patterns.EMAIL_ADDRESS.matcher(email).matches()
-    /*
-    //Email
-    private val _email = MutableLiveData<String>()
-    val email : LiveData<String> = _email
 
-    //Password
-
-    private val _password = MutableLiveData<String>()
-    val password : LiveData<String> = _password
-
-    //Valor que nos ayudara a habilitar o deshabilitar el boton del login
-    private val _loginEnable = MutableLiveData<Boolean>()
-    val loginEnable : LiveData<Boolean> = _loginEnable
-
-
-    fun onLoginChange(email: String,password: String) {
-        _email.value = email
-        _password.value = password
-        _loginEnable.value = isValidEmail(email) && isValidPassword(password)
-    }
-
-    private fun isValidPassword(password: String):Boolean = password.length > 6
-
-    private fun isValidEmail(email: String):Boolean = Patterns.EMAIL_ADDRESS.matcher(email).matches()
-
-    fun onLoginSelected() {
-
-    }*/
 
 }

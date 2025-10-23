@@ -14,19 +14,28 @@ import com.example.examplemvvm.ui.theme.login.ui.screens.login.LoginScreen
 
 
 @Composable
-fun NavigationWrapper(){
+fun NavigationWrapper() {
     val navController: NavHostController = rememberNavController()
-    NavHost(navController = navController, startDestination = Screens.LOGIN){
+    NavHost(navController = navController, startDestination = Screens.LOGIN) {
         composable(Screens.LOGIN) {
             LoginScreen(navegarRegistro = {
-            navController.navigate(Screens.REGISTRO){
-                /*permite borrar el stack de navegacion y solo poner al que debemos volver*/
-                popUpTo(Screens.LOGIN){inclusive = false}
-            }
-        }) }
-        composable(Screens.REGISTRO){
+                navController.navigate(Screens.REGISTRO) {
+                    /*permite borrar el stack de navegacion y solo poner al que debemos volver*/
+                    popUpTo(Screens.LOGIN) { inclusive = true }
+                }
+            }, navegarDashboard = {
+                navController.navigate(Screens.DASHBOARD) {
+                    /*permite borrar el stack de navegacion y solo poner al que debemos volver*/
+                    popUpTo(Screens.LOGIN) { inclusive = true }
+                }
+
+            })
+        }
+        composable(Screens.REGISTRO) {
             RegistroScreen(navegarToDashboard = {
                 navController.navigate(Screens.DASHBOARD)
+            }, navegarToLogin = {
+                navController.navigate(Screens.LOGIN)
             })
         }
         composable(Screens.DASHBOARD) {
@@ -44,7 +53,7 @@ fun NavigationWrapper(){
         composable(Screens.CONFIGURACION) {
 
         }
-        composable(Screens.HISTORIAL) {  }
+        composable(Screens.HISTORIAL) { }
     }
-   // Creamos un fichero llamado screens en donde se almacenaran las panrallas en forma de objetos
+    // Creamos un fichero llamado screens en donde se almacenaran las panrallas en forma de objetos
 }
