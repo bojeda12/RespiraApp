@@ -6,6 +6,8 @@ plugins {
     //Agregamos aqui para la navegacion
     alias(libs.plugins.jetbrainsKotlinSerialization)
     id("kotlin-kapt")
+
+
 }
 
 android {
@@ -69,6 +71,10 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
 
+    //Graficos vico
+    implementation("com.patrykandpatrick.vico:core:1.14.0")
+    implementation("com.patrykandpatrick.vico:compose:1.14.0")
+    implementation("com.patrykandpatrick.vico:compose-m3:1.14.0")
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
