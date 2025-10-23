@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ExampleMVVMTheme {
-                NavigationWrapper() //Creamos la instancia del view model
+                NavigationWrapper() //aqui se carga la navegacion que creamos en la carpeta de navegacion
                 }
             }
         }

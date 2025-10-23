@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import com.example.examplemvvm.R
 import com.example.examplemvvm.ui.screens.componentes.Container
+import com.example.examplemvvm.ui.screens.componentes.Grafica
 
 
 @Preview(showBackground = true)
@@ -69,7 +70,7 @@ fun Dashboard(modifier: Modifier, viewModel: DashboardViewModel) {
         Spacer(Modifier.height(20.dp))
         BotonBox(
             modifier = Modifier,
-            "Registra estado de animo",
+            "Registra tu animo",
             painterResource(id = R.drawable.mood)
         )
         Spacer(Modifier.height(15.dp))
@@ -81,6 +82,9 @@ fun Dashboard(modifier: Modifier, viewModel: DashboardViewModel) {
         )
         RutinasRapidas()
         Etiquetas(texto = "Historial", modifier = Modifier.clickable{}, tamanoLetra = 18.sp)
+        Spacer(Modifier.height(30.dp))
+        Grafica(moodsByDay = listOf(1, 2, 2, 3, 3, 3, 5))
+        Etiquetas(texto = "Horario recomendado para respirar: 6:00 PM",modifier=Modifier, tamanoLetra = 18.sp)
     }
 
 
@@ -99,7 +103,7 @@ fun BienvenidaLabel(nombreUser: String) {
 @Composable
 fun Etiquetas(texto: String, modifier: Modifier, tamanoLetra: TextUnit) {
     Box(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         contentAlignment = Alignment.TopStart
     ) {
         Text(
@@ -176,9 +180,9 @@ fun RutinasRapidas() {
             .height(70.dp).padding(top = 10.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        FloatingActionButtonExample("1 minutos")
-        FloatingActionButtonExample("3 minutos")
-        FloatingActionButtonExample("5 minutos")
+        FloatingActionButtonExample("1 min")
+        FloatingActionButtonExample("3 min")
+        FloatingActionButtonExample("5 min")
     }
 }
 
@@ -186,8 +190,13 @@ fun RutinasRapidas() {
 fun FloatingActionButtonExample(texto: String) {
     FloatingActionButton(onClick = { },
         modifier = Modifier
-            .width(100.dp)) {
+            .width(90.dp)) {
         Text(texto)
     }
+}
+
+@Composable
+fun grafica(modifier: Modifier){
+
 }
 

@@ -84,7 +84,7 @@ fun Container(
                     )
                 }
             } else {
-                Spacer(modifier = Modifier.size(48.dp))
+                Spacer(modifier = Modifier.size(0.dp))
             }
             if (showEncabezado){
                 Text(
@@ -92,7 +92,7 @@ fun Container(
                     color = Color.White,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(top = 7.dp, start = 90.dp, end = 30.dp)
+                    modifier = Modifier.padding(top = 7.dp, start = 70.dp, end = 30.dp)
                 )
             }
 
@@ -114,7 +114,7 @@ fun Container(
                     )
                 }
             } else {
-                Spacer(modifier = Modifier.size(48.dp))
+                Spacer(modifier = Modifier.size(0.dp))
             }
             if(showConfiguracion){
                 Box(
