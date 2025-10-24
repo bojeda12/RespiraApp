@@ -84,7 +84,7 @@ fun Grafica(
     )
 
     // Estilo de la línea
-    val lineSpec = LineChart.LineSpec(lineThicknessDp = 3f)
+    val lineSpec = LineChart.LineSpec(lineThicknessDp = 4f)
 
     Chart(
         chart = lineChart(lines = listOf(lineSpec), spacing = 16.dp),

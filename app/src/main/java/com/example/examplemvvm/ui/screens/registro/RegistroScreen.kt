@@ -59,8 +59,8 @@ fun RegistroScreen(
         viewModel.navigationEvent.collect { event ->
             Log.d("LoginScreen", "Evento recibido: $event")
             when (event) {
-                is LoginViewModel.NavigationTarget.Registro -> navegarToLogin()
-                is LoginViewModel.NavigationTarget.Dashboard -> navegarToDashboard()
+                is RegistroViewModel.NavigationTarget.Login -> navegarToLogin()
+                is RegistroViewModel.NavigationTarget.Dashboard -> navegarToDashboard()
             }
         }
     }
@@ -169,7 +169,7 @@ fun Label1(modifier: Modifier, texto: String) {
         text = texto,
         fontSize = 20.sp,
         fontWeight = FontWeight.Bold,
-        color = Color(0xFF41837B),
+        color = Color(0xFF347771),
 
         )
 }

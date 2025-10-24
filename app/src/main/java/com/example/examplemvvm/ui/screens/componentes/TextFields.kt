@@ -40,8 +40,8 @@ fun TextFields(valor: String, etiqueta:String, placeholderTexto:String, modifier
         colors = TextFieldDefaults.colors(
             focusedTextColor = Color(0xFF367A72),
             unfocusedTextColor = Color(0xFF132F2C),
-            focusedContainerColor = Color.Transparent,
-            unfocusedContainerColor = Color.Transparent,
+            focusedContainerColor = Color.White,
+            unfocusedContainerColor = Color.White,
         )
     )
 }
@@ -67,5 +67,11 @@ fun TextFieldCreated1(valor: String, etiqueta:String, placeholderTexto:String, m
             minLines = 1,
             interactionSource = MutableInteractionSource(),
             shape = RoundedCornerShape(30.dp),
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = Color(0xFF367A72),
+                unfocusedTextColor = Color(0xFF132F2C),
+                focusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.White,
+            )
         )
 }

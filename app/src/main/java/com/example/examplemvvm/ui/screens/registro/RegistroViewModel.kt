@@ -12,10 +12,14 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
 class RegistroViewModel: ViewModel() {
+
+    //Aqui decribimos los mutable data de los textfield, basicamente es cuando cambia de estado
     private val _state = MutableLiveData(RegistroState())
 
     val state: LiveData<RegistroState> = _state
-    private val _navigationEvent = MutableSharedFlow<LoginViewModel.NavigationTarget>()
+
+    //Aqui definimos las variables de nuestr navegacion
+    private val _navigationEvent = MutableSharedFlow<RegistroViewModel.NavigationTarget>()
     val navigationEvent = _navigationEvent.asSharedFlow()
 
     fun onEvent(event: RegistroEvent){
@@ -42,12 +46,12 @@ class RegistroViewModel: ViewModel() {
             }
             is RegistroEvent.RegistroClicked -> {
                 viewModelScope.launch {
-                    _navigationEvent.emit(LoginViewModel.NavigationTarget.Dashboard)
+                    _navigationEvent.emit(RegistroViewModel.NavigationTarget.Dashboard)
                 }
             }
             is RegistroEvent.BackClicked -> {
                 viewModelScope.launch {
-                    _navigationEvent.emit(LoginViewModel.NavigationTarget.Registro)
+                    _navigationEvent.emit(RegistroViewModel.NavigationTarget.Login)
                 }
             }
 

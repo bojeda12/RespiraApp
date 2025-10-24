@@ -1,5 +1,6 @@
 package com.example.examplemvvm.ui.screens.dashboard
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -22,6 +23,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,22 +40,54 @@ import androidx.lifecycle.ViewModel
 import com.example.examplemvvm.R
 import com.example.examplemvvm.ui.screens.componentes.Container
 import com.example.examplemvvm.ui.screens.componentes.Grafica
+import com.example.examplemvvm.ui.screens.registro.RegistroViewModel
 
 
-@Preview(showBackground = true)
 @Composable
-fun DashboardScreen(viewModel: DashboardViewModel = DashboardViewModel()) {
+fun DashboardScreen(
+    viewModel: DashboardViewModel = DashboardViewModel(),
+    navegarToConfiguracion: () -> Unit,
+    navegarToEstados: () -> Unit,
+    navegarToRespirarRutinas: () -> Unit,
+    navegarToRespirar: () -> Unit,
+    navegarToHistorial: () -> Unit
+) {
+    // Escuchar eventos de navegación
+    LaunchedEffect(Unit) {
+        viewModel.navigationEvent.collect { event ->
+            when (event) {
+                is DashboardViewModel.NavigationTarget.Configuracion -> navegarToConfiguracion()
+                is DashboardViewModel.NavigationTarget.Estados -> navegarToEstados()
+                is DashboardViewModel.NavigationTarget.RespiracionRutina -> navegarToRespirarRutinas()
+                is DashboardViewModel.NavigationTarget.Rutina1 -> navegarToRespirar()
+                is DashboardViewModel.NavigationTarget.Historial -> navegarToHistorial()
+            }
+        }
+    }
     Container(
         showConfiguracion = true,
         showEncabezado = true,
+        onHomeClick = { viewModel.onEvent(DashboardEvent.BtnConfiguracionClicked) },
         encabezado = "DASHBOARD"
     ) {
-        Dashboard(modifier = Modifier, viewModel = viewModel)
+        Dashboard(
+            modifier = Modifier, viewModel = viewModel,
+            navegarToEstados = navegarToEstados,
+            navegarToRespirarRutinas = navegarToRespirarRutinas,
+            navegarToRespirar = navegarToRespirar,
+            navegarToHistorial = navegarToHistorial
+        )
     }
 }
 
 @Composable
-fun Dashboard(modifier: Modifier, viewModel: DashboardViewModel) {
+fun Dashboard(
+    modifier: Modifier, viewModel: DashboardViewModel,
+    navegarToEstados: () -> Unit,
+    navegarToRespirarRutinas: () -> Unit,
+    navegarToRespirar: () -> Unit,
+    navegarToHistorial: () -> Unit
+) {
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -72,19 +106,26 @@ fun Dashboard(modifier: Modifier, viewModel: DashboardViewModel) {
             modifier = Modifier,
             "Registra tu animo",
             painterResource(id = R.drawable.mood)
-        )
+        ){viewModel.onEvent(DashboardEvent.BntEstadoClicked)}
         Spacer(Modifier.height(15.dp))
-        BotonBox(modifier = Modifier, "Elegir Rutina", painterResource(id = R.drawable.rutina))
+        BotonBox(modifier = Modifier,
+            "Elegir Rutina",
+            painterResource(id = R.drawable.rutina)
+        ){viewModel.onEvent(DashboardEvent.BtnRespiracionRutinaClicked)}
         Etiquetas(
             texto = "Rutinas de respiracion rapidas",
             modifier = Modifier,
             tamanoLetra = 18.sp
         )
-        RutinasRapidas()
-        Etiquetas(texto = "Historial", modifier = Modifier.clickable{}, tamanoLetra = 18.sp)
+        RutinasRapidas(){viewModel.onEvent(DashboardEvent.BtnRutina1Clicked)}
+        Etiquetas(texto = "Historial", modifier = Modifier.clickable {viewModel.onEvent(DashboardEvent.BtnHistorialClicked)}, tamanoLetra = 18.sp)
         Spacer(Modifier.height(30.dp))
         Grafica(moodsByDay = listOf(1, 2, 2, 3, 3, 3, 5))
-        Etiquetas(texto = "Horario recomendado para respirar: 6:00 PM",modifier=Modifier, tamanoLetra = 18.sp)
+        Etiquetas(
+            texto = "Horario recomendado para respirar: 6:00 PM",
+            modifier = Modifier,
+            tamanoLetra = 18.sp
+        )
     }
 
 
@@ -135,14 +176,14 @@ fun DashboardBotones(texto: String) {
 }
 
 @Composable
-fun BotonBox(modifier: Modifier, texto: String, dibujo: Painter) {
+fun BotonBox(modifier: Modifier, texto: String, dibujo: Painter,onClick: () -> Unit) {
     Box(
         modifier = modifier
             .fillMaxWidth()
             .height(80.dp)
             .clip(shape = RoundedCornerShape(35))
             .background(Color(0xFF359B94))
-            .clickable { print("holo") },
+            .clickable { onClick() },
     ) {
         Box(
             modifier = modifier
@@ -174,29 +215,33 @@ fun BotonBox(modifier: Modifier, texto: String, dibujo: Painter) {
 
 
 @Composable
-fun RutinasRapidas() {
+fun RutinasRapidas(onClick: () -> Unit) {
     Row(
-        modifier = Modifier.fillMaxWidth()
-            .height(70.dp).padding(top = 10.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(70.dp)
+            .padding(top = 10.dp),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        FloatingActionButtonExample("1 min")
-        FloatingActionButtonExample("3 min")
-        FloatingActionButtonExample("5 min")
+        FloatingActionButtonExample("1 min",onClick)
+        FloatingActionButtonExample("3 min",onClick)
+        FloatingActionButtonExample("5 min",onClick)
     }
 }
 
 @Composable
-fun FloatingActionButtonExample(texto: String) {
-    FloatingActionButton(onClick = { },
+fun FloatingActionButtonExample(texto: String,onClick: () -> Unit) {
+    FloatingActionButton(
+        onClick = {onClick()},
         modifier = Modifier
-            .width(90.dp)) {
+            .width(90.dp)
+    ) {
         Text(texto)
     }
 }
 
 @Composable
-fun grafica(modifier: Modifier){
+fun grafica(modifier: Modifier) {
 
 }
 
