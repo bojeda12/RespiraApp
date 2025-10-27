@@ -3,4 +3,15 @@ plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.kotlin.android) apply false
     alias(libs.plugins.kotlin.compose) apply false
+    id("com.google.devtools.ksp") version "2.2.10-2.0.2" apply false
+    kotlin("jvm") version "2.2.0" apply false
+    id("com.google.dagger.hilt.android") version "2.57.1" apply false
+    //kotlin("android") version "2.2.0" apply false
+
 }
+buildscript {
+    dependencies {
+        classpath("com.google.dagger:hilt-android-gradle-plugin:2.48")
+    }
+}
+

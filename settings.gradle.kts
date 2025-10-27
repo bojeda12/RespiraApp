@@ -10,6 +10,12 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
     }
+    plugins {
+        id("com.google.devtools.ksp") version "2.2.10-2.0.2"
+        kotlin("jvm")
+    }
+
+
 }
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
@@ -18,6 +24,7 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
+
 
 rootProject.name = "ExampleMVVM"
 include(":app")
