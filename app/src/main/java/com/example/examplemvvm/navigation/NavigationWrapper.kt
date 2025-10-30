@@ -38,11 +38,10 @@ fun NavigationWrapper() {
             })
         }
         composable(Screens.REGISTRO) {
-            RegistroScreen(navegarToDashboard = {
-                navController.navigate(Screens.DASHBOARD)
-            }, navegarToLogin = {
-                navController.navigate(Screens.LOGIN)
-            })
+            RegistroScreen(
+                navegarToDashboard = { navController.navigate(Screens.DASHBOARD){popUpTo(Screens.REGISTRO) { inclusive = true }} },
+                navegarToLogin = { navController.navigate(Screens.LOGIN){popUpTo(Screens.LOGIN) { inclusive = true }} }
+            )
         }
         composable(Screens.DASHBOARD) {
             DashboardScreen(

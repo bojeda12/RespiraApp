@@ -5,7 +5,7 @@ import com.example.examplemvvm.domain.model.SesionRespiracion
 
 
 fun SesionRespiracionEntity.toModel(): SesionRespiracion =
-    SesionRespiracion(id, fecha, duracion, id_usuario, id_tiporespiracion, id_recomendacion)
+    SesionRespiracion(id, fecha, duracion,horaInicio, id_usuario, id_tiporespiracion, id_recomendacion)
 
 fun SesionRespiracion.toEntity(): SesionRespiracionEntity =
-    SesionRespiracionEntity(id, fecha, duracion, id_usuario, id_tiporespiracion, id_recomendacion)
+    SesionRespiracionEntity(id, fecha, duracion,horaInicio, id_usuario, id_tiporespiracion, id_recomendacion)
