@@ -20,9 +20,10 @@ import java.time.LocalDate
     ]
 )
 data class SesionRespiracionEntity(
-    @PrimaryKey val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val fecha: String,
     val duracion: Int,
+    val horaInicio: String,
     val id_usuario: Int,
     val id_tiporespiracion: Int,
     val id_recomendacion: Int
