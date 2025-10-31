@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -22,40 +23,53 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
+
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.examplemvvm.R
 import com.example.examplemvvm.ui.screens.componentes.Container
 
-@Preview
+
+
 @Composable
-fun EstadoScreen(){
-    Estados()
+fun EstadoScreen(viewModel: EstadoViewModel = EstadoViewModel(), navegarToDashboard: () -> Unit) {
+    LaunchedEffect(Unit) {
+        viewModel.navigationEvent.collect { event ->
+            when (event) {
+                is EstadoViewModel.NavigationTarget.toBack -> navegarToDashboard()
+            }
+        }
+    }
+    Container(
+        showEncabezado = true,
+        showBackButton = true,
+        onBackClick = {viewModel.onEvent(EstadoEvent.btnBackClicked)},
+        encabezado = "ELIGE ESTADO DE ANIMO"
+    ) {
+        Estados()
+    }
+
 }
 
 
 @Composable
-fun Estados(){
-    Container(
-        showEncabezado = true,
-        showBackButton = true,
-        onBackClick = {}
-        ) {
-        Column(modifier = Modifier
+fun Estados() {
+
+    Column(
+        modifier = Modifier
             .padding(top = 50.dp)
             .height(550.dp),
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            LblEstado()
-            BotonEstados(estado = "Muy bien", dibuja = painterResource(id = R.drawable.happyface))
-            BotonEstados(estado = "Bien", dibuja = painterResource(id = R.drawable.happy))
-            BotonEstados(estado = "Neutro", dibuja = painterResource(id = R.drawable.confused))
-            BotonEstados(estado = "Mal", dibuja = painterResource(id = R.drawable.sad))
-            BotonEstados(estado = "Muy mal", dibuja = painterResource(id = R.drawable.sadface))
-        }
-
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        LblEstado()
+        BotonEstados(estado = "Muy bien", dibuja = painterResource(id = R.drawable.happyface))
+        BotonEstados(estado = "Bien", dibuja = painterResource(id = R.drawable.happy))
+        BotonEstados(estado = "Neutro", dibuja = painterResource(id = R.drawable.confused))
+        BotonEstados(estado = "Mal", dibuja = painterResource(id = R.drawable.sad))
+        BotonEstados(estado = "Muy mal", dibuja = painterResource(id = R.drawable.sadface))
     }
+
+
 }
 
 @Composable
@@ -67,6 +81,7 @@ fun LblEstado() {
         fontSize = 30.sp
     )
 }
+
 @Composable
 fun BotonEstados(
     modifier: Modifier = Modifier,
@@ -79,7 +94,7 @@ fun BotonEstados(
             .height(80.dp)
             .clip(shape = RoundedCornerShape(35))
             .background(Color(0xFF359B94))
-            .clickable{}
+            .clickable {}
 
     ) {
         Box(

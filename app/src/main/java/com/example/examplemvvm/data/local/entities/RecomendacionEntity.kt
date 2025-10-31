@@ -5,6 +5,6 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "recomendacion")
 data class RecomendacionEntity(
-    @PrimaryKey val id: Int,
+    @PrimaryKey (autoGenerate = true) val id: Int = 0,
     val tipoRecomendacion: String
 )

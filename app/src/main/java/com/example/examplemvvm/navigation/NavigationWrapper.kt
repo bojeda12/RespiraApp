@@ -39,32 +39,50 @@ fun NavigationWrapper() {
         }
         composable(Screens.REGISTRO) {
             RegistroScreen(
-                navegarToDashboard = { navController.navigate(Screens.DASHBOARD){popUpTo(Screens.REGISTRO) { inclusive = true }} },
-                navegarToLogin = { navController.navigate(Screens.LOGIN){popUpTo(Screens.LOGIN) { inclusive = true }} }
+                navegarToDashboard = {
+                    navController.navigate(Screens.DASHBOARD) {
+                        popUpTo(Screens.REGISTRO) {
+                            inclusive = true
+                        }
+                    }
+                },
+                navegarToLogin = {
+                    navController.navigate(Screens.LOGIN) {
+                        popUpTo(Screens.LOGIN) {
+                            inclusive = true
+                        }
+                    }
+                }
             )
         }
         composable(Screens.DASHBOARD) {
             DashboardScreen(
-                navegarToConfiguracion={navController.navigate(Screens.CONFIGURACION)},
-                navegarToEstados={navController.navigate(Screens.ESTADOANIMO)},
-                navegarToRespirarRutinas={navController.navigate(Screens.RUTINAS)},
-                navegarToRespirar={navController.navigate(Screens.RESPIRACION)},
-                navegarToHistorial={navController.navigate(Screens.HISTORIAL)}
+                navegarToConfiguracion = { navController.navigate(Screens.CONFIGURACION) },
+                navegarToEstados = { navController.navigate(Screens.ESTADOANIMO) },
+                navegarToRespirarRutinas = { navController.navigate(Screens.RUTINAS) },
+                navegarToRespirar = { navController.navigate(Screens.RESPIRACION) },
+                navegarToHistorial = { navController.navigate(Screens.HISTORIAL) }
             )
         }
         composable(Screens.RUTINAS) {
-            RutinaScreen()
+            RutinaScreen(
+                navegarToRespira = { navController.navigate(Screens.RESPIRACION) },
+                navegarBackDashboard = { navController.navigate(Screens.DASHBOARD) }
+            )
         }
         composable(Screens.ESTADOANIMO) {
-            EstadoScreen()
+            EstadoScreen(navegarToDashboard = { navController.navigate(Screens.DASHBOARD) })
 
         }
         composable(Screens.RESPIRACION) {
-            RespiraScreen()
+            RespiraScreen(goToDashboard = { navController.navigate(Screens.DASHBOARD) })
 
         }
         composable(Screens.CONFIGURACION) {
-            ConfiguracionScreen()
+            ConfiguracionScreen(
+                navegarToDashboard = { navController.navigate(Screens.DASHBOARD) },
+                cerrarSesion = { navController.navigate(Screens.LOGIN) }
+            )
 
         }
         composable(Screens.HISTORIAL) {

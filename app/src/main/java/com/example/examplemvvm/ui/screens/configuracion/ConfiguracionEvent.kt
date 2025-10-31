@@ -1,4 +1,6 @@
 package com.example.examplemvvm.ui.screens.configuracion
 
-class ConfiguracionEvent {
+sealed class ConfiguracionEvent {
+    object btnBackClicked: ConfiguracionEvent()
+    object btnCerrarSesionClicked: ConfiguracionEvent()
 }

@@ -24,7 +24,7 @@ object DatabaseModule {
             context,
             AppDatabase::class.java,
             "app_database"
-        ).fallbackToDestructiveMigration()
+        ).fallbackToDestructiveMigration()//Borrar despues porqeue esto borra la base de datos si existe si no hemos definido una migracion
             .build()
 
     @Provides

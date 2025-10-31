@@ -31,28 +31,35 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.example.examplemvvm.ui.screens.componentes.Container
+import com.example.examplemvvm.ui.screens.rutinas.RutinaViewModel
 import kotlinx.coroutines.delay
-@Preview
-@Composable
-fun RespiraScreen(){
-    Respira()
 
-}
+
 @Composable
-fun Respira(){
+fun RespiraScreen(viewModel: RespiraViewModel = RespiraViewModel(), goToDashboard: () -> Unit) {
+    LaunchedEffect(Unit) {
+        viewModel.navigationEvent.collect { event ->
+            when (event) {
+                is RespiraViewModel.NavigationTarget.goToDashboard -> goToDashboard()
+            }
+        }
+    }
     Container(
         showEncabezado = true,
-        showBackButton = true,
         showHomeButton = true,
+        onHomeClick = {viewModel.onEvent(RespiraEvent.btnDashboardClicked)},
         encabezado = "Hora de respirar"
-        ) {
+    ) {
         RespireAnimation()
     }
-}
-@Composable
-fun LblEncabezado(){
 
 }
+
+@Composable
+fun LblEncabezado() {
+
+}
+
 enum class BreathingState {
     Inhaling,
     Exhaling
@@ -127,7 +134,8 @@ fun RespireAnimation() {
 
     // Ciclo de respiración
     LaunchedEffect(breathingState) {
-        val duration = if (breathingState == BreathingState.Inhaling) inhaleDuration else exhaleDuration
+        val duration =
+            if (breathingState == BreathingState.Inhaling) inhaleDuration else exhaleDuration
         delay(duration.toLong() + holdDuration)
         breathingState = if (breathingState == BreathingState.Inhaling)
             BreathingState.Exhaling else BreathingState.Inhaling

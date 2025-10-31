@@ -17,7 +17,7 @@ import java.time.LocalDate
     indices = [Index(value = ["id_usuario"])]
 )
 data class RegistroEstadoAnimoEntity(
-    @PrimaryKey val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val fecha: String,
     val estadoAnimo: String,
     val id_usuario: Int
