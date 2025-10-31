@@ -22,6 +22,7 @@ fun HistorialScreen() {
     Container(
         showBackButton = true,
         showEncabezado = true,
+        onHomeClick = {},
         onBackClick = {},
         encabezado = "Historial"
     ) {
