@@ -86,7 +86,7 @@ fun NavigationWrapper() {
 
         }
         composable(Screens.HISTORIAL) {
-            HistorialScreen()
+            HistorialScreen(goToDashboard = { navController.navigate(Screens.DASHBOARD) } )
         }
     }
     // Creamos un fichero llamado screens en donde se almacenaran las panrallas en forma de objetos

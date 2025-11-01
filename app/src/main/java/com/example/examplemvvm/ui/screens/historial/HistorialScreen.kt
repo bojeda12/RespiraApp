@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -16,14 +17,23 @@ import androidx.compose.ui.unit.sp
 import com.example.examplemvvm.ui.screens.componentes.Container
 import com.example.examplemvvm.ui.screens.componentes.Grafica
 
-@Preview
+
 @Composable
-fun HistorialScreen() {
+fun HistorialScreen(
+    viewModel: HistorialViewModel = HistorialViewModel(),
+    goToDashboard: () -> Unit
+) {
+    LaunchedEffect(Unit) {
+        viewModel.navigationEvent.collect { event ->
+            when (event) {
+                is HistorialViewModel.NavigationTarget.goToBack->goToDashboard()
+            }
+        }
+    }
     Container(
         showBackButton = true,
         showEncabezado = true,
-        onHomeClick = {},
-        onBackClick = {},
+        onBackClick = {viewModel.onEvent(HistorialEvent.btnBackClicked)},
         encabezado = "Historial"
     ) {
         Historial()
