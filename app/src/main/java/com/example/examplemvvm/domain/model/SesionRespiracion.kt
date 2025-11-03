@@ -8,6 +8,5 @@ data class SesionRespiracion(
     val duracion: Int,
     val horaInicio: String,
     val id_usuario: Int,
-    val id_tiporespiracion: Int,
-    val id_recomendacion: Int
+    val id_tiporespiracion: Int? = null,
 )

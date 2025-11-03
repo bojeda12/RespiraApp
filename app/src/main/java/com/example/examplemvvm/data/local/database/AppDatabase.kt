@@ -14,7 +14,7 @@ import com.example.examplemvvm.data.local.dao.*
         TipoRespiracionEntity::class,
         RecomendacionEntity::class
     ],
-    version = 1,
+    version = 4,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

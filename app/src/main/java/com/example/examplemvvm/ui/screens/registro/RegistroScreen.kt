@@ -1,193 +1,212 @@
 package com.example.examplemvvm.ui.screens.registro
 
-import android.graphics.drawable.Icon
-import android.util.Log
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.TimePicker
-import androidx.compose.material3.TimePickerState
-import androidx.compose.material3.TimePickerColors
-import androidx.compose.material3.TimePickerDefaults
-import androidx.compose.material3.TimePickerLayoutType
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.runtime.Composable
-import androidx.compose.material3.Text
-import androidx.compose.runtime.getValue
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.rememberTimePickerState
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.examplemvvm.R
+import com.example.examplemvvm.ui.components.AlertaSnackBar
+import com.example.examplemvvm.ui.components.AlertaTipo
 import com.example.examplemvvm.ui.screens.componentes.Container
 import com.example.examplemvvm.ui.screens.componentes.Logo
 import com.example.examplemvvm.ui.screens.componentes.TextFieldCreated1
-import com.example.examplemvvm.ui.screens.componentes.TextFields
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.graphics.painter.Painter
-import com.example.examplemvvm.ui.theme.login.ui.screens.login.LoginViewModel
-
+import com.example.examplemvvm.ui.screens.estado.BotonEstados
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun RegistroScreen(
-    viewModel: RegistroViewModel = RegistroViewModel(),
+    viewModel: RegistroViewModel = hiltViewModel(),
     navegarToDashboard: () -> Unit,
-    navegarToLogin:() -> Unit
+    navegarToLogin: () -> Unit
 ) {
-    // Escuchar eventos de navegación
+    val state by viewModel.state.observeAsState(RegistroState())
+    val coroutineScope = rememberCoroutineScope()
+    var currentStep by remember { mutableStateOf(1) }
+    var alerta by remember { mutableStateOf<Pair<String, AlertaTipo>?>(null) }
+
+    // Escuchar mensajes del ViewModel
     LaunchedEffect(Unit) {
-        viewModel.navigationEvent.collect { event ->
-            Log.d("LoginScreen", "Evento recibido: $event")
-            when (event) {
-                is RegistroViewModel.NavigationTarget.Login -> navegarToLogin()
+        viewModel.mensajeUI.collect { mensaje ->
+            alerta = mensaje
+        }
+    }
+
+    // Escuchar navegación
+    LaunchedEffect(Unit) {
+        viewModel.navigationEvent.collect { target ->
+            when (target) {
                 is RegistroViewModel.NavigationTarget.Dashboard -> navegarToDashboard()
+                is RegistroViewModel.NavigationTarget.Login -> navegarToLogin()
             }
         }
     }
-    Container(
-        showBackButton = true,
-        showHomeButton = false,
-        onBackClick = {viewModel.onEvent(RegistroEvent.BackClicked)},
-        encabezado = "REGISTRATE",
-        showEncabezado = true
-    ) {
-        Registro(
-            modifier = Modifier,
-            viewModel = viewModel,
-            navegarToDashboard = navegarToDashboard
-        )
-    }
 
+    Box(modifier = Modifier.fillMaxSize()) {
+        Container(
+            showBackButton = true,
+            onBackClick = { viewModel.onEvent(RegistroEvent.BackClicked) },
+            showEncabezado = true,
+            encabezado = "REGÍSTRATE"
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                when (currentStep) {
+                    1 -> StepDatosUsuario(state, viewModel, coroutineScope) { currentStep++ }
+                    2 -> StepCorreoYContrasena(state, viewModel, coroutineScope) {
+                        coroutineScope.launch {
+                            if (viewModel.validarStep2()) {
+                                viewModel.onEvent(RegistroEvent.RegistroClicked)
+                            }
+                        }
+                    }
+                    3 -> StepEstadoAnimo(state, viewModel, coroutineScope) {
+                        coroutineScope.launch {
+                            if (viewModel.validarStep3()) {
+                                viewModel.onEvent(RegistroEvent.RegistroClicked)
+                            }
+                        }
+                    }
+                }
+
+                if (currentStep > 1) {
+                    Spacer(modifier = Modifier.height(20.dp))
+                    TextButton(onClick = { currentStep-- }) {
+                        Text("Regresar")
+                    }
+                }
+            }
+        }
+
+        // Snackbar personalizado
+        alerta?.let { (msg, tipo) ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                contentAlignment = Alignment.BottomCenter
+            ) {
+                AlertaSnackBar(
+                    message = msg,
+                    type = tipo,
+                    onDismiss = { alerta = null },
+                    modifier = Modifier.zIndex(1f)
+                )
+            }
+        }
+    }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Registro(
-    modifier: Modifier, viewModel: RegistroViewModel,
-    navegarToDashboard: () -> Unit
+fun StepDatosUsuario(
+    state: RegistroState,
+    viewModel: RegistroViewModel,
+    coroutineScope: CoroutineScope,
+    onNext: () -> Unit
 ) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text("Paso 1: Información básica", style = MaterialTheme.typography.titleLarge)
+        Spacer(Modifier.height(16.dp))
+        Logo(modifier = Modifier.align(Alignment.CenterHorizontally), imagen = painterResource(id = R.drawable.respira))
 
-    val state by viewModel.state.observeAsState(RegistroState())
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Logo(
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            imagen = painterResource(id = R.drawable.respira)
-        )
-        TextFieldCreated1(
-            state.nombreUsuario,
-            "Nombre de usuario",
-            "Ejemplo:pepe@gmail.com"
-        )
-        { viewModel.onEvent(RegistroEvent.NombreUsuarioChanged(it)) }
+        TextFieldCreated1(state.nombreUsuario, "Nombre de usuario", "Ejemplo: pepe@gmail.com") {
+            viewModel.onEvent(RegistroEvent.nombreUsuarioChanged(it))
+        }
 
-        TextFieldCreated1(
-            state.correo,
-            "Correo",
-            "Ingresa tu correo"
-        ) { viewModel.onEvent(RegistroEvent.correoChanged(it)) }
+        TextFieldCreated1(state.correo, "Correo", "Ingresa tu correo") {
+            viewModel.onEvent(RegistroEvent.correoChanged(it))
+        }
 
         TextFieldCreated1(state.contrasena, "Contrasena", "Ingresa tu contrasena") {
-            viewModel.onEvent(
-                RegistroEvent.contrasenaChanged(it)
-            )
+            viewModel.onEvent(RegistroEvent.contrasenaChanged(it))
         }
 
-        TextFieldCreated1(
-            state.confirmarContrasena,
-            "Confirma contrasena",
-            "Confirma tu contrasena",
-        ) { viewModel.onEvent(RegistroEvent.confirmarContrasenaChanged(it)) }
-        Spacer(modifier = Modifier.padding(8.dp))
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp),
-            horizontalArrangement = Arrangement.Start
-        ) {
-            Label1(modifier = modifier, texto = "¿Como te sintes el dia de hoy?")
+        TextFieldCreated1(state.confirmarContrasena, "Confirma contrasena", "Confirma tu contrasena") {
+            viewModel.onEvent(RegistroEvent.confirmarContrasenaChanged(it))
+        }
 
+        Spacer(Modifier.height(24.dp))
+        Button(onClick = {
+            coroutineScope.launch {
+                if (viewModel.validarStep1()) {
+                    onNext()
+                }
+            }
+        }, modifier = Modifier.fillMaxWidth()) {
+            Text("Siguiente")
         }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 10.dp)
-                .height(60.dp)
-                .background(color = Color.White),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            FloatingActionButtonExample(imagen = painterResource(id = R.drawable.sadface))
-            FloatingActionButtonExample(imagen = painterResource(id = R.drawable.sad))
-            FloatingActionButtonExample(imagen = painterResource(id = R.drawable.confused))
-            FloatingActionButtonExample(imagen = painterResource(id = R.drawable.happy))
-            FloatingActionButtonExample(imagen = painterResource(id = R.drawable.happyface))
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.Start
-        ) {
-            Label1(modifier = modifier, texto = "Elige un horario para respirar")
-
-        }
-        MyTimePicker()
-        Spacer(Modifier.height(30.dp))
-        RegistrateButton(){viewModel.onEvent(RegistroEvent.RegistroClicked)}
-        Spacer(Modifier.height(30.dp))
     }
-
 }
 
 @Composable
-fun Label1(modifier: Modifier, texto: String) {
-    Text(
-        text = texto,
-        fontSize = 20.sp,
-        fontWeight = FontWeight.Bold,
-        color = Color(0xFF347771),
+fun StepCorreoYContrasena(
+    state: RegistroState,
+    viewModel: RegistroViewModel,
+    coroutineScope: CoroutineScope,
+    onNext: () -> Unit
+) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text("Paso 2: ¿Cómo te sientes hoy?", style = MaterialTheme.typography.titleLarge)
+        Spacer(Modifier.height(16.dp))
 
-        )
+        Column(modifier = Modifier.padding(top = 50.dp).height(420.dp), verticalArrangement = Arrangement.SpaceBetween) {
+            val opciones = listOf("Muy bien" to "1", "Bien" to "2", "Neutro" to "3", "Mal" to "4", "Muy mal" to "5")
+
+            opciones.forEach { (texto, valor) ->
+                val icono = when (valor) {
+                    "1" -> painterResource(id = R.drawable.happyface)
+                    "2" -> painterResource(id = R.drawable.happy)
+                    "3" -> painterResource(id = R.drawable.confused)
+                    "4" -> painterResource(id = R.drawable.sad)
+                    else -> painterResource(id = R.drawable.sadface)
+                }
+
+                val seleccionado = state.estadoAnimo == valor
+                BotonEstados(estado = texto, dibuja = icono, isSelected = seleccionado) {
+                    viewModel.onEvent(RegistroEvent.estadoAnimoChanged(valor))
+                }
+            }
+        }
+
+        Spacer(Modifier.height(24.dp))
+        Button(onClick = { if (viewModel.validarStep2()) onNext() }, modifier = Modifier.fillMaxWidth(), enabled = state.estadoAnimo.isNotEmpty()) {
+            Text("Siguiente")
+        }
+    }
 }
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FloatingActionButtonExample(imagen: Painter) {
-    FloatingActionButton(onClick = { }) {
-        Image(
-            painter = imagen,
-            contentDescription = "Botón de acción",
-            modifier = Modifier.size(24.dp) // ajusta el tamaño del ícono
-        )
+fun StepEstadoAnimo(state: RegistroState, viewModel: RegistroViewModel, coroutineScope: CoroutineScope, onRegister: () -> Unit) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Text("Paso 3:Horario de sesion", style = MaterialTheme.typography.titleLarge)
+        Spacer(Modifier.height(16.dp))
+        MyTimePicker(viewModel = viewModel)
+
+        Spacer(Modifier.height(24.dp))
+        Button(
+            onClick = onRegister,
+            modifier = Modifier.fillMaxWidth(),
+            enabled = state.isFormularioValido()
+        ) {
+            Text("Registrar usuario")
+        }
     }
 }
 
 @Composable
 @ExperimentalMaterial3Api
-fun MyTimePicker() {
+fun MyTimePicker(viewModel: RegistroViewModel) {
     val state = rememberTimePickerState()
     TimePicker(
         state = state,
@@ -196,25 +215,11 @@ fun MyTimePicker() {
         layoutType = TimePickerDefaults.layoutType()
     )
     Text(text = "Hora seleccionada H:M = ${state.hour} : ${state.minute}")
-}
-
-@Composable
-fun RegistrateButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
-    Button(
-        onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(48.dp),
-        colors = ButtonDefaults.buttonColors
-            (
-            containerColor = Color(0xFF359B94),
-            disabledContainerColor = Color(0xFF347771),
-            contentColor = Color(0xFFFFFFFF),
-            disabledContentColor = Color(0xFFFFFFFF)
-        ),
-    )
-    {
-        Text(text = "Registrate")
+    Button(onClick = {
+        viewModel.onEvent(RegistroEvent.horaRespiracionChanged(state.hour))
+        viewModel.onEvent(RegistroEvent.minutoRespiracionchanged(state.minute))
+    }) {
+        Text("Confirmar hora")
     }
 }
 

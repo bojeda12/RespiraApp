@@ -66,7 +66,7 @@ fun TextFieldCreated1(valor: String, etiqueta:String, placeholderTexto:String, m
             maxLines = 1,
             minLines = 1,
             interactionSource = MutableInteractionSource(),
-            shape = RoundedCornerShape(30.dp),
+            shape = RoundedCornerShape(15.dp),
             colors = TextFieldDefaults.colors(
                 focusedTextColor = Color(0xFF367A72),
                 unfocusedTextColor = Color(0xFF132F2C),

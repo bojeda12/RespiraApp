@@ -13,8 +13,11 @@ interface UsuarioDao {
     suspend fun getAllUsuarios(): List<UsuarioEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertUsuario(usuario: UsuarioEntity)
+    suspend fun insertarUsuario(usuario: UsuarioEntity): Long
 
     @Delete
     suspend fun deleteUsuario(usuario: UsuarioEntity)
+
+    @Query("SELECT COUNT(*) FROM usuario WHERE correo = :correo")
+    suspend fun contarPorCorreo(correo: String): Int
 }

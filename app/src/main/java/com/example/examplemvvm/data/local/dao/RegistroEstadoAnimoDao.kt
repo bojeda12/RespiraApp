@@ -12,5 +12,5 @@ interface RegistroEstadoAnimoDao {
     suspend fun getRegistrosByUsuario(usuarioId: Int): List<RegistroEstadoAnimoEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertRegistro(registro: RegistroEstadoAnimoEntity)
+    suspend fun insertarEstado(estado: RegistroEstadoAnimoEntity)
 }
