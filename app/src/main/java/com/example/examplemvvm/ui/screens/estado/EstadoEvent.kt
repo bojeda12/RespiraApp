@@ -1,4 +1,6 @@
 package com.example.examplemvvm.ui.screens.estado
 
-class EstadoEvent {
+sealed class EstadoEvent {
+
+    object btnBackClicked: EstadoEvent()
 }

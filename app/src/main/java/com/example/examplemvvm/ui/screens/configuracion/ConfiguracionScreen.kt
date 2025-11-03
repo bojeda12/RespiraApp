@@ -39,89 +39,111 @@ import androidx.compose.material3.TimePickerDefaults
 import androidx.compose.material3.TimePickerLayoutType
 import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.rememberTimePickerState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.examplemvvm.ui.screens.componentes.TextFieldCreated1
 import java.util.Calendar
 
 
-@Preview
 @Composable
-fun ConfiguracionScreen() {
-    Configuracion()
-}
-
-@Composable
-fun Configuracion() {
+fun ConfiguracionScreen(
+    viewModel: ConfiguracionViewModel = ConfiguracionViewModel(),
+    navegarToDashboard: () -> Unit,
+    cerrarSesion: () -> Unit
+) {
+    LaunchedEffect(Unit) {
+        viewModel.navigationEvent.collect { event ->
+            when (event) {
+                is ConfiguracionViewModel.NavigationTarget.goToBack->navegarToDashboard()
+                is ConfiguracionViewModel.NavigationTarget.cerrarSesion->cerrarSesion()
+            }
+        }
+    }
     Container(
         showEncabezado = true,
         showBackButton = true,
         encabezado = "Configuracion",
-        onBackClick = {}
+        onBackClick = {viewModel.onEvent(ConfiguracionEvent.btnBackClicked)}
     ) {
-        Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                GeneralLbl(texto = "Activar notificaciones", tamano = 18.sp)
-                EstadoChange()
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                GeneralLbl(texto = "Activar recomendaciones", tamano = 18.sp)
-                EstadoChange()
-            }
-            GeneralLbl(
-                texto = "Selecciona un hoario que deses para tus rutinas",
-                tamano = 18.sp,
-                alineacionTexto = TextAlign.Center
-            )
-            SeleccionHora()
-            Box(
-                modifier = Modifier
-                    .padding(top = 10.dp, bottom = 15.dp)
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(10))
-                    .background(Color(0x5C359B94))
+        Configuracion(viewModel = viewModel,cierraSesion = cerrarSesion)
+    }
+}
 
-            ) {
-                Column(modifier = Modifier
+@Composable
+fun Configuracion(viewModel : ConfiguracionViewModel, cierraSesion:()-> Unit) {
+
+    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            GeneralLbl(texto = "Activar notificaciones", tamano = 18.sp)
+            EstadoChange()
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            GeneralLbl(texto = "Activar recomendaciones", tamano = 18.sp)
+            EstadoChange()
+        }
+        GeneralLbl(
+            texto = "Selecciona un hoario que deses para tus rutinas",
+            tamano = 18.sp,
+            alineacionTexto = TextAlign.Center
+        )
+        SeleccionHora()
+        Box(
+            modifier = Modifier
+                .padding(top = 10.dp, bottom = 15.dp)
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(10))
+                .background(Color(0x5C359B94))
+
+        ) {
+            Column(
+                modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 15.dp, vertical = 15.dp)
-                ) {
-                        GeneralLbl(texto = "Modificar Perfil", tamano = 20.sp, modifier = Modifier.fillMaxWidth(), alineacionTexto = TextAlign.Center)
-                    TextFieldCreated1(
+            ) {
+                GeneralLbl(
+                    texto = "Modificar Perfil",
+                    tamano = 20.sp,
+                    modifier = Modifier.fillMaxWidth(),
+                    alineacionTexto = TextAlign.Center
+                )
+                TextFieldCreated1(
 
-                        valor = "",
-                        etiqueta = "Usuario",
-                        placeholderTexto = "Ejemplo:user123",
-                    ) {}
-                    TextFieldCreated1(
-                        valor = "",
-                        etiqueta = "Correo",
-                        placeholderTexto = "Ejemplo@gmail.com",
-                    ) {}
-                    TextFieldCreated1(
-                        valor = "",
-                        etiqueta = "Contrasena",
-                        placeholderTexto = "Ejemplo:Ejemplo123!",
-                    ) {}
-                    Spacer(Modifier.height(15.dp))
-                    BotonBox(modifier = Modifier, "Guardar", background = 0xFF41837B)
-                }
-
+                    valor = "",
+                    etiqueta = "Usuario",
+                    placeholderTexto = "Ejemplo:user123",
+                ) {}
+                TextFieldCreated1(
+                    valor = "",
+                    etiqueta = "Correo",
+                    placeholderTexto = "Ejemplo@gmail.com",
+                ) {}
+                TextFieldCreated1(
+                    valor = "",
+                    etiqueta = "Contrasena",
+                    placeholderTexto = "Ejemplo:Ejemplo123!",
+                ) {}
+                Spacer(Modifier.height(15.dp))
+                BotonBox(modifier = Modifier, "Guardar", background = 0xFF41837B)
             }
-            BotonBox(modifier = Modifier, texto = "Cerrar sesion", background = 0xFFB70000)
-            Spacer(Modifier.height(35.dp))
-        }
 
+        }
+        BotonBox(modifier = Modifier.clickable{viewModel.onEvent(ConfiguracionEvent.btnCerrarSesionClicked)}, texto = "Cerrar sesion", background = 0xFFB70000)
+        Spacer(Modifier.height(35.dp))
     }
+
+
 }
 
 @Composable
@@ -168,7 +190,7 @@ fun SeleccionHora() {
 }
 
 @Composable
-fun BotonBox(modifier: Modifier, texto: String,background: Long) {
+fun BotonBox(modifier: Modifier, texto: String, background: Long) {
     Box(
         modifier = modifier
             .fillMaxWidth()
