@@ -19,7 +19,7 @@ fun AlertaSnackBar(
     val backgroundColor = when (type) {
         AlertaTipo.EXITO -> Color(0xFF4CAF50)
         AlertaTipo.ERROR -> Color(0xFFF44336)
-        AlertaTipo.INFO -> Color(0xFFFFC107)
+        AlertaTipo.INFO -> Color(0xFFB5A047)
     }
 
     LaunchedEffect(message) {
