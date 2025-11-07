@@ -26,10 +26,12 @@ class RegistroViewModel @Inject constructor(private val usuarioRepository: Usuar
     private val _navigationEvent = MutableSharedFlow<NavigationTarget>()
     val navigationEvent = _navigationEvent.asSharedFlow()
 
+
+    //Emitimos el mensaje a nuestra pantalla, desde el modelo
     private val _mensajeUI = MutableSharedFlow<Pair<String, AlertaTipo>>()
     val mensajeUI = _mensajeUI.asSharedFlow()
 
-    // 🔹 Validaciones Step 1 ahora suspend
+    //Validaciones Step 1
     suspend fun validarStep1(): Boolean {
         val s = state.value!!
         // Verifica campos vacíos
@@ -116,7 +118,7 @@ class RegistroViewModel @Inject constructor(private val usuarioRepository: Usuar
                     )
                     try {
                         usuarioRepository.registrarUsuarioCompleto(usuario, estado, sesion)
-                        _navigationEvent.emit(NavigationTarget.Dashboard)
+                        _navigationEvent.emit(NavigationTarget.Login)
                     } catch (e: Exception) {
                         Log.e("RegistroError", "Error al registrar: ${e.message}")
                     }

@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -35,6 +36,7 @@ import com.example.examplemvvm.ui.screens.componentes.Container
 import com.example.examplemvvm.ui.screens.componentes.Logo
 import com.example.examplemvvm.ui.screens.componentes.TextFields
 import com.example.examplemvvm.R
+import com.example.examplemvvm.ui.components.AlertaSnackBar
 
 /*
 * Creamos el vie model en el login screen y podemos pasar esos parametros en donde los vayamos a utilziar
@@ -52,18 +54,19 @@ fun LoginScreen(
     aqui adentro para no tener que inicializarlo en el mainActivity*/
 
     // usamos solo el Container reutilizable para la "card" blanca
-    Container() {
-        // aqui estamos en el ColumnScope interno del Container
-        // llama al composable que contiene los campos y botones
-        Login(
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            viewModel = viewModel,
-            navegarRegistro = navegarRegistro,
-            navegarDashboard = navegarDashboard
-        )
+    Box(modifier = Modifier.fillMaxSize()) {
+        Container() {
+            // aqui estamos en el ColumnScope interno del Container
+            // llama al composable que contiene los campos y botones
+            Login(
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                viewModel = viewModel,
+                navegarRegistro = navegarRegistro,
+                navegarDashboard = navegarDashboard
+            )
+        }
+
     }
-
-
 }
 
 @Composable
@@ -85,6 +88,10 @@ fun Login(
     }
 
     val state by viewModel.state.observeAsState(LoginState())
+
+    //variables que tran los errores del viewModel
+    val emailError by viewModel.emailError
+    val passwordError by viewModel.passwordError
     //val email : String by viewModel.email.observeAsState(initial = "")//Cremaos el evento que observa los cambios con el observer state
     // val password : String by viewModel.password.observeAsState(initial = "")
     //val loginEnable : Boolean by viewModel.loginEnable.observeAsState(initial = false)
@@ -103,18 +110,18 @@ fun Login(
         )
         Spacer(modifier = Modifier.padding(10.dp))
         //EmailField(state.email) { viewModel.onEvent(LoginEvent.EmailChanged(it)) }
-        TextFields(state.email, "Email", "Email") { viewModel.onEvent(LoginEvent.EmailChanged(it)) }
+        TextFields(state.email, "Email", "Email", errorMessage = emailError) { viewModel.onEvent(LoginEvent.EmailChanged(it)) }
         Spacer(modifier = Modifier.padding(18.dp))
-        PasswordField(state.password) { viewModel.onEvent(LoginEvent.PasswordChanged(it)) }
+        PasswordField(state.password, errorMessage = passwordError) { viewModel.onEvent(LoginEvent.PasswordChanged(it)) }
         Spacer(modifier = Modifier.padding(4.dp))
         ForgotPassword(Modifier.align(Alignment.End))
         Spacer(modifier = Modifier.padding(10.dp))
-        LoginButton(state.isLoginEnabled) {
+        LoginButton() {
             Log.d("LoginScreen", "Botón presionado")
             viewModel.onEvent(LoginEvent.LoginClicked)
         }
         Spacer(modifier = Modifier.padding(4.dp))
-        Registrate(modifier = Modifier){viewModel.onEvent(LoginEvent.RegistrateClicked)}
+        Registrate(modifier = Modifier) { viewModel.onEvent(LoginEvent.RegistrateClicked) }
     }
 }
 
@@ -131,7 +138,7 @@ fun Registrate(modifier: Modifier, onClick: () -> Unit) {
 
 
 @Composable
-fun LoginButton(loginEnable: Boolean, onLoginSelected: () -> Unit) {
+fun LoginButton(onLoginSelected: () -> Unit) {
     Button(
         onClick = { onLoginSelected() },
         modifier = Modifier
@@ -143,8 +150,7 @@ fun LoginButton(loginEnable: Boolean, onLoginSelected: () -> Unit) {
             disabledContainerColor = Color(0xFF347771),
             contentColor = Color(0xFFFFFFFF),
             disabledContentColor = Color(0xFFFFFFFF)
-        ),
-        enabled = loginEnable
+        )
     )
     {
         Text(text = "Iniciar sesion")
@@ -163,21 +169,31 @@ fun ForgotPassword(modifier: Modifier) {
 }
 
 @Composable//brandon
-fun PasswordField(password: String, onTextFieldChanged: (String) -> Unit) {
-    TextField(
-        value = password,
-        onValueChange = { onTextFieldChanged(it) },
-        modifier = Modifier.fillMaxWidth(),
-        label = { Text("Password") },
-        placeholder = { Text(text = "Password") },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-        singleLine = true,
-        maxLines = 1,
-        colors = TextFieldDefaults.colors(
-            focusedTextColor = Color(0xFF41837B),
-            unfocusedTextColor = Color(0xFF57C4BC),
-            focusedContainerColor = Color.Transparent,
-            unfocusedContainerColor = Color.Transparent,
+fun PasswordField(password: String,errorMessage: String = "", onTextFieldChanged: (String) -> Unit) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        TextField(
+            value = password,
+            onValueChange = { onTextFieldChanged(it) },
+            modifier = Modifier.fillMaxWidth(),
+            label = { Text("Password") },
+            placeholder = { Text(text = "Password") },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            singleLine = true,
+            maxLines = 1,
+            colors = TextFieldDefaults.colors(
+                focusedTextColor = Color(0xFF41837B),
+                unfocusedTextColor = Color(0xFF57C4BC),
+                focusedContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
+            )
         )
-    )
+        if (errorMessage.isNotEmpty()) {
+            Text(
+                text = errorMessage,
+                color = Color.Red,
+                fontSize = 12.sp,
+                modifier = Modifier.padding(start = 16.dp, top = 2.dp)
+            )
+        }
+    }
 }
