@@ -2,22 +2,31 @@ package com.example.examplemvvm.ui.screens.dashboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.examplemvvm.data.local.session.SesionManager
 import com.example.examplemvvm.ui.screens.registro.RegistroEvent
 import com.example.examplemvvm.ui.screens.registro.RegistroViewModel
 import com.example.examplemvvm.ui.theme.login.ui.screens.login.LoginViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 //import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 //import javax.inject.Inject
 
-//@HiltViewModel
-class DashboardViewModel(
-//@Inject constructor(private val dao: MoodDao
+@HiltViewModel
+class DashboardViewModel @Inject constructor(
+    private val sesionManager: SesionManager
 ): ViewModel() {
+
+    //pasamos el nombre de usuario que nos dio el sessionManager
+    val nombreUsuario: StateFlow<String> = sesionManager.nombreUsuario
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), "")
 
     // variablepara nuestra grafica
     private val _weekMoods = MutableStateFlow(listOf(1,2,2,3,3,3,5))
@@ -32,6 +41,7 @@ class DashboardViewModel(
             is DashboardEvent.BtnConfiguracionClicked-> {
                 viewModelScope.launch {
                     _navigationEvent.emit(DashboardViewModel.NavigationTarget.Configuracion)
+                    sesionManager.cerrarSesion()
                 }
             }
             is DashboardEvent.BntEstadoClicked -> {

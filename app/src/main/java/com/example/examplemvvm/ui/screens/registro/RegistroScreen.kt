@@ -67,7 +67,7 @@ fun RegistroScreen(
                     2 -> StepCorreoYContrasena(state, viewModel, coroutineScope) {
                         coroutineScope.launch {
                             if (viewModel.validarStep2()) {
-                                viewModel.onEvent(RegistroEvent.RegistroClicked)
+                                currentStep++
                             }
                         }
                     }

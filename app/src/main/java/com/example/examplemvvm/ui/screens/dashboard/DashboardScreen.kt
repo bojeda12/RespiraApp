@@ -24,6 +24,8 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,6 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import com.example.examplemvvm.R
 import com.example.examplemvvm.ui.screens.componentes.Container
@@ -45,7 +48,7 @@ import com.example.examplemvvm.ui.screens.registro.RegistroViewModel
 
 @Composable
 fun DashboardScreen(
-    viewModel: DashboardViewModel = DashboardViewModel(),
+    viewModel: DashboardViewModel = hiltViewModel(),
     navegarToConfiguracion: () -> Unit,
     navegarToEstados: () -> Unit,
     navegarToRespirarRutinas: () -> Unit,
@@ -95,7 +98,9 @@ fun Dashboard(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        BienvenidaLabel("Brandon")
+        val nombre by viewModel.nombreUsuario.collectAsState()
+
+        BienvenidaLabel(nombre)
         Etiquetas(
             "Ultimo estado de animo registrado: \uD83D\uDE01",
             modifier = Modifier,
