@@ -7,6 +7,7 @@ object Login
 @Serializable
 object Registro*/
 object Screens{
+    const val SPLASH = "splash"
     const val LOGIN = "login"
     const val REGISTRO = "registro"
     const val DASHBOARD = "dashboard"

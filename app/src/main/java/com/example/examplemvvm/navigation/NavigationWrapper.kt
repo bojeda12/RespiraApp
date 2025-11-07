@@ -2,6 +2,7 @@ package com.example.examplemvvm.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -16,13 +17,14 @@ import com.example.examplemvvm.ui.screens.historial.HistorialScreen
 import com.example.examplemvvm.ui.screens.registro.RegistroScreen
 import com.example.examplemvvm.ui.screens.respira.RespiraScreen
 import com.example.examplemvvm.ui.screens.rutinas.RutinaScreen
+import com.example.examplemvvm.ui.screens.splashScreen.SplashScreen
 import com.example.examplemvvm.ui.theme.login.ui.screens.login.LoginScreen
 
 
 @Composable
 fun NavigationWrapper() {
     val navController: NavHostController = rememberNavController()
-    NavHost(navController = navController, startDestination = Screens.LOGIN) {
+    NavHost(navController = navController, startDestination = Screens.SPLASH) {
         composable(Screens.LOGIN) {
             LoginScreen(navegarRegistro = {
                 navController.navigate(Screens.REGISTRO) {
@@ -69,6 +71,9 @@ fun NavigationWrapper() {
         }
         composable(Screens.HISTORIAL) {
             HistorialScreen()
+        }
+        composable(Screens.SPLASH) {
+            SplashScreen(navController = navController)
         }
     }
     // Creamos un fichero llamado screens en donde se almacenaran las panrallas en forma de objetos
