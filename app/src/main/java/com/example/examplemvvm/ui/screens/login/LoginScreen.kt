@@ -29,6 +29,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.examplemvvm.ui.screens.componentes.Container
 import com.example.examplemvvm.ui.screens.componentes.Logo
@@ -42,7 +43,7 @@ import com.example.examplemvvm.R
 
 @Composable
 fun LoginScreen(
-    viewModel: LoginViewModel = viewModel(),
+    viewModel: LoginViewModel = hiltViewModel(),
     navegarRegistro: () -> Unit,
     navegarDashboard: () -> Unit
 ) {

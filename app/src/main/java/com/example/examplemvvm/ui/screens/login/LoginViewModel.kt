@@ -1,14 +1,19 @@
 package com.example.examplemvvm.ui.theme.login.ui.screens.login
 
+import android.util.Log
 import android.util.Patterns
 import androidx.compose.runtime.MutableState
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.examplemvvm.data.local.session.SesionManager
+import com.example.examplemvvm.domain.repository.UsuarioRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 /*
     Debemos de importar las librerias necesarias para poder trabajar con la arquitecruta MVVM
@@ -24,7 +29,11 @@ import kotlinx.coroutines.launch
 
     */
 //Creamos los estados con liveData aqui dentro
-class LoginViewModel: ViewModel() {
+@HiltViewModel
+class LoginViewModel @Inject constructor(
+    private val usuarioRepository: UsuarioRepository,
+    private val sesionManager: SesionManager
+) : ViewModel() {
     private val _state = MutableLiveData(LoginState())
     val state: LiveData<LoginState> = _state
     private val _navigationEvent = MutableSharedFlow<NavigationTarget>()
@@ -46,9 +55,7 @@ class LoginViewModel: ViewModel() {
             }
             //Aqui manejamos la navegacion
             is LoginEvent.LoginClicked -> {
-                viewModelScope.launch {
-                    _navigationEvent.emit(NavigationTarget.Dashboard)
-                }
+                iniciarSesion(current.email,current.password)
             }
             is LoginEvent.RegistrateClicked->{
                 viewModelScope.launch {
@@ -58,12 +65,24 @@ class LoginViewModel: ViewModel() {
         }
 
     }
+    fun iniciarSesion(correo: String, contrasena: String) {
+        viewModelScope.launch {
+            val usuario = usuarioRepository.getUsuarios()
+                .find { it.correo == correo && it.contrasena == contrasena }
+
+            if (usuario != null) {
+                sesionManager.guardarSesion(usuario.id, usuario.nombre_usuario)
+                _navigationEvent.emit(NavigationTarget.Dashboard )
+            }
+        }
+    }
+
+
     sealed class NavigationTarget{
         object Registro : NavigationTarget()
         object Dashboard : NavigationTarget()
     }
-    private fun isValidPassword(password:String):Boolean = password.length > 6
+    private fun isValidPassword(password:String):Boolean = password.length > 2
     private fun isValidEmail(email:String): Boolean = Patterns.EMAIL_ADDRESS.matcher(email).matches()
-
 
 }
