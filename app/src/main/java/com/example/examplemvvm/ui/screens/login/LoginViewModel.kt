@@ -55,7 +55,7 @@ class LoginViewModel @Inject constructor(
             }
             //Aqui manejamos la navegacion
             is LoginEvent.LoginClicked -> {
-                iniciarSesion()
+                iniciarSesion(current.email,current.password)
             }
             is LoginEvent.RegistrateClicked->{
                 viewModelScope.launch {
@@ -65,20 +65,18 @@ class LoginViewModel @Inject constructor(
         }
 
     }
-    private fun iniciarSesion() {
+    fun iniciarSesion(correo: String, contrasena: String) {
         viewModelScope.launch {
-            val s = state.value ?: return@launch
-            val usuarios = usuarioRepository.getUsuarios()
-            val usuario = usuarios.find { it.correo == s.email && it.contrasena == s.password }
+            val usuario = usuarioRepository.getUsuarios()
+                .find { it.correo == correo && it.contrasena == contrasena }
 
             if (usuario != null) {
-                sesionManager.guardarSesion(usuario.id)
-                _navigationEvent.emit(NavigationTarget.Dashboard)
-            } else {
-                // Aquí podrías emitir un mensaje de error si usas Snackbar o similar
+                sesionManager.guardarSesion(usuario.id, usuario.nombre_usuario)
+                _navigationEvent.emit(NavigationTarget.Dashboard )
             }
         }
     }
+
 
     sealed class NavigationTarget{
         object Registro : NavigationTarget()
