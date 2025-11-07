@@ -12,6 +12,6 @@ interface SesionRespiracionDao {
     suspend fun getSesionesByUsuario(usuarioId: Int): List<SesionRespiracionEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertSesion(sesion: SesionRespiracionEntity)
+    suspend fun insertarSesion(sesion: SesionRespiracionEntity)
 }
 

@@ -14,8 +14,8 @@ import com.example.examplemvvm.data.local.dao.*
         TipoRespiracionEntity::class,
         RecomendacionEntity::class
     ],
-    version = 1,
-    exportSchema = false// nos permite generar un esquema en formato JSON de la estructura de la base de datos
+    version = 4,
+    exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun usuarioDao(): UsuarioDao

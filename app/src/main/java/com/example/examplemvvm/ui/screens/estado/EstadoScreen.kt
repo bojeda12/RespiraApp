@@ -59,14 +59,16 @@ fun Estados() {
         modifier = Modifier
             .padding(top = 50.dp)
             .height(550.dp),
-        verticalArrangement = Arrangement.SpaceBetween
-    ) {
-        LblEstado()
-        BotonEstados(estado = "Muy bien", dibuja = painterResource(id = R.drawable.happyface))
-        BotonEstados(estado = "Bien", dibuja = painterResource(id = R.drawable.happy))
-        BotonEstados(estado = "Neutro", dibuja = painterResource(id = R.drawable.confused))
-        BotonEstados(estado = "Mal", dibuja = painterResource(id = R.drawable.sad))
-        BotonEstados(estado = "Muy mal", dibuja = painterResource(id = R.drawable.sadface))
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            LblEstado()
+            BotonEstados(estado = "Muy bien", dibuja = painterResource(id = R.drawable.happyface)){}
+            BotonEstados(estado = "Bien", dibuja = painterResource(id = R.drawable.happy)){}
+            BotonEstados(estado = "Neutro", dibuja = painterResource(id = R.drawable.confused)){}
+            BotonEstados(estado = "Mal", dibuja = painterResource(id = R.drawable.sad)){}
+            BotonEstados(estado = "Muy mal", dibuja = painterResource(id = R.drawable.sadface)){}
+        }
+
     }
 
 
@@ -86,17 +88,22 @@ fun LblEstado() {
 fun BotonEstados(
     modifier: Modifier = Modifier,
     estado: String = "",
-    dibuja: Painter
+    dibuja: Painter,
+    isSelected: Boolean = false, // Nuevo parámetro
+    onClick: () -> Unit
 ) {
+    val backgroundColor = if (isSelected) Color(0xFF347771) else Color(0xFF359B94)
+    val textColor = Color.White
+
     Box(
         modifier = modifier
             .fillMaxWidth()
             .height(80.dp)
             .clip(shape = RoundedCornerShape(35))
-            .background(Color(0xFF359B94))
-            .clickable {}
-
+            .background(backgroundColor)
+            .clickable { onClick() } // Manejamos el click
     ) {
+        // Icono al inicio
         Box(
             modifier = modifier
                 .fillMaxWidth()
@@ -104,21 +111,20 @@ fun BotonEstados(
             contentAlignment = Alignment.TopStart
         ) {
             Image(
-                //painterResource(id = R.drawable.respira)
-                modifier = Modifier
-                    .size(34.dp),
+                modifier = Modifier.size(34.dp),
                 painter = dibuja,
-                contentDescription = ""
+                contentDescription = estado
             )
         }
+
+        // Texto centrado
         Box(
-            modifier
-                .align(Alignment.Center),
+            modifier.align(Alignment.Center),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 estado,
-                color = Color.White,
+                color = textColor,
                 fontSize = 18.sp,
                 modifier = modifier.width(180.dp),
                 textAlign = TextAlign.Center,
@@ -126,7 +132,7 @@ fun BotonEstados(
                 overflow = TextOverflow.Ellipsis
             )
         }
-
     }
 }
+
 

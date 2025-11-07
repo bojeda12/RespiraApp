@@ -5,6 +5,18 @@ data class RegistroState(
     val contrasena:String = "",
     val confirmarContrasena: String = "",
     val correo:String = "",
-    val hora:String = "",
-    val minutos:String = ""
-)
+    val estadoAnimo:String = "",
+    val hora:Int = 0,
+    val minutos: Int = 0,
+    val mensaje: String? = null
+){
+    fun isFormularioValido(): Boolean{
+        return nombreUsuario.isNotBlank() &&
+                correo.isNotBlank()&&
+                contrasena.isNotBlank()&&
+                confirmarContrasena.isNotBlank()&&
+                contrasena == confirmarContrasena &&
+                estadoAnimo.isNotBlank()
+
+    }
+}

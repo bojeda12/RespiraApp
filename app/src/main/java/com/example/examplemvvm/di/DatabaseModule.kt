@@ -3,6 +3,10 @@ package com.example.examplemvvm.di
 
 import android.content.Context
 import androidx.room.Room
+import com.example.examplemvvm.data.local.dao.RecomendacionDao
+import com.example.examplemvvm.data.local.dao.RegistroEstadoAnimoDao
+import com.example.examplemvvm.data.local.dao.SesionRespiracionDao
+import com.example.examplemvvm.data.local.dao.TipoRespiracionDao
 import com.example.examplemvvm.data.local.dao.UsuarioDao
 import com.example.examplemvvm.data.local.database.AppDatabase
 import com.example.examplemvvm.data.repository.UsuarioRepositoryImpl
@@ -10,6 +14,7 @@ import com.example.examplemvvm.domain.repository.UsuarioRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -19,7 +24,7 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideDatabase(context: Context): AppDatabase =
+    fun provideDatabase(@ApplicationContext context: Context): AppDatabase =
         Room.databaseBuilder(
             context,
             AppDatabase::class.java,
@@ -29,8 +34,21 @@ object DatabaseModule {
 
     @Provides
     fun provideUsuarioDao(db: AppDatabase): UsuarioDao = db.usuarioDao()
+    @Provides
+    fun provideRegistroEstadoAnimoDao(db: AppDatabase): RegistroEstadoAnimoDao = db.registroEstadoAnimoDao()
+    @Provides
+    fun provideSesionRespiracionDao(db: AppDatabase): SesionRespiracionDao = db.sesionRespiracionDao()
+    @Provides
+    fun provideTipoRespiracionDao(db: AppDatabase): TipoRespiracionDao = db.tipoRespiracionDao()
+    @Provides
+    fun provideRecomendacionDao(db: AppDatabase): RecomendacionDao = db.recomendacionDao()
 
     @Provides
-    fun provideUsuarioRepository(dao: UsuarioDao): UsuarioRepository =
-        UsuarioRepositoryImpl(dao)
+    fun provideUsuarioRepository(
+        usuarioDao: UsuarioDao,
+        registroEstadoAnimoDao: RegistroEstadoAnimoDao,
+        sesionsDao: SesionRespiracionDao
+    ): UsuarioRepository{
+        return UsuarioRepositoryImpl(usuarioDao,registroEstadoAnimoDao,sesionsDao)
+    }
 }
