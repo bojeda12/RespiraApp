@@ -72,8 +72,6 @@ fun Estados() {
     }
 
 
-}
-
 @Composable
 fun LblEstado() {
     Text(
