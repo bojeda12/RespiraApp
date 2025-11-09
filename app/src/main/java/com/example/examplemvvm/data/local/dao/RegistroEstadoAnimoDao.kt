@@ -11,7 +11,6 @@ import com.example.examplemvvm.data.local.entities.RegistroEstadoAnimoEntity
 interface RegistroEstadoAnimoDao {
     @Query("SELECT * FROM registroestadoanimo WHERE id_usuario = :usuarioId")
     suspend fun getRegistrosByUsuario(usuarioId: Int): List<RegistroEstadoAnimoEntity>
-
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertarEstado(estado: RegistroEstadoAnimoEntity)
 }

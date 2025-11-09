@@ -104,6 +104,12 @@ dependencies {
 
     //dependdencioas para el datastore incluido dentro de las sesiones del usuario en sesionManager
     implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation("androidx.compose.material:material-icons-extended:1.5.4")
+
+    //para usar el LazyVerticalGrid
+    implementation("androidx.compose.foundation:foundation:1.5.0")
+
+
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

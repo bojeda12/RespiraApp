@@ -14,8 +14,10 @@ import com.example.examplemvvm.R
 import com.example.examplemvvm.ui.components.AlertaSnackBar
 import com.example.examplemvvm.ui.components.AlertaTipo
 import com.example.examplemvvm.ui.screens.componentes.Container
+import com.example.examplemvvm.ui.screens.componentes.TimePickerGenerico
 import com.example.examplemvvm.ui.screens.componentes.Logo
-import com.example.examplemvvm.ui.screens.componentes.TextFieldCreated1
+import com.example.examplemvvm.ui.screens.componentes.TxtPasswordField
+import com.example.examplemvvm.ui.screens.componentes.TxtFieldGeneral
 import com.example.examplemvvm.ui.screens.estado.BotonEstados
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -64,14 +66,15 @@ fun RegistroScreen(
             ) {
                 when (currentStep) {
                     1 -> StepDatosUsuario(state, viewModel, coroutineScope) { currentStep++ }
-                    2 -> StepCorreoYContrasena(state, viewModel, coroutineScope) {
+                    2 -> StepRegistroAnimo(state, viewModel, coroutineScope) {
                         coroutineScope.launch {
                             if (viewModel.validarStep2()) {
                                 currentStep++
                             }
                         }
                     }
-                    3 -> StepEstadoAnimo(state, viewModel, coroutineScope) {
+
+                    3 -> StepRegistroHorario(state, viewModel, coroutineScope) {
                         coroutineScope.launch {
                             if (viewModel.validarStep3()) {
                                 viewModel.onEvent(RegistroEvent.RegistroClicked)
@@ -118,21 +121,28 @@ fun StepDatosUsuario(
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text("Paso 1: Información básica", style = MaterialTheme.typography.titleLarge)
         Spacer(Modifier.height(16.dp))
-        Logo(modifier = Modifier.align(Alignment.CenterHorizontally), imagen = painterResource(id = R.drawable.respira))
+        Logo(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            imagen = painterResource(id = R.drawable.respira)
+        )
 
-        TextFieldCreated1(state.nombreUsuario, "Nombre de usuario", "Ejemplo: pepe@gmail.com") {
+        TxtFieldGeneral(state.nombreUsuario, "Nombre de usuario", "Ejemplo: pepe") {
             viewModel.onEvent(RegistroEvent.nombreUsuarioChanged(it))
         }
 
-        TextFieldCreated1(state.correo, "Correo", "Ingresa tu correo") {
+        TxtFieldGeneral(state.correo, "Correo", "Ejemplo: pepe@gmail.com") {
             viewModel.onEvent(RegistroEvent.correoChanged(it))
         }
 
-        TextFieldCreated1(state.contrasena, "Contrasena", "Ingresa tu contrasena") {
+        TxtPasswordField(state.contrasena, "Contrasena", "Ingresa tu contrasena") {
             viewModel.onEvent(RegistroEvent.contrasenaChanged(it))
         }
 
-        TextFieldCreated1(state.confirmarContrasena, "Confirma contrasena", "Confirma tu contrasena") {
+        TxtPasswordField(
+            state.confirmarContrasena,
+            "Confirma contrasena",
+            "Confirma tu contrasena"
+        ) {
             viewModel.onEvent(RegistroEvent.confirmarContrasenaChanged(it))
         }
 
@@ -150,7 +160,7 @@ fun StepDatosUsuario(
 }
 
 @Composable
-fun StepCorreoYContrasena(
+fun StepRegistroAnimo(
     state: RegistroState,
     viewModel: RegistroViewModel,
     coroutineScope: CoroutineScope,
@@ -160,8 +170,19 @@ fun StepCorreoYContrasena(
         Text("Paso 2: ¿Cómo te sientes hoy?", style = MaterialTheme.typography.titleLarge)
         Spacer(Modifier.height(16.dp))
 
-        Column(modifier = Modifier.padding(top = 50.dp).height(420.dp), verticalArrangement = Arrangement.SpaceBetween) {
-            val opciones = listOf("Muy bien" to "1", "Bien" to "2", "Neutro" to "3", "Mal" to "4", "Muy mal" to "5")
+        Column(
+            modifier = Modifier
+                .padding(top = 50.dp)
+                .height(420.dp),
+            verticalArrangement = Arrangement.SpaceBetween
+        ) {
+            val opciones = listOf(
+                "Muy bien" to "1",
+                "Bien" to "2",
+                "Neutro" to "3",
+                "Mal" to "4",
+                "Muy mal" to "5"
+            )
 
             opciones.forEach { (texto, valor) ->
                 val icono = when (valor) {
@@ -180,19 +201,33 @@ fun StepCorreoYContrasena(
         }
 
         Spacer(Modifier.height(24.dp))
-        Button(onClick = { if (viewModel.validarStep2()) onNext() }, modifier = Modifier.fillMaxWidth(), enabled = state.estadoAnimo.isNotEmpty()) {
+        Button(
+            onClick = { if (viewModel.validarStep2()) onNext() },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = state.estadoAnimo.isNotEmpty()
+        ) {
             Text("Siguiente")
         }
     }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StepEstadoAnimo(state: RegistroState, viewModel: RegistroViewModel, coroutineScope: CoroutineScope, onRegister: () -> Unit) {
+fun StepRegistroHorario(
+    state: RegistroState,
+    viewModel: RegistroViewModel,
+    coroutineScope: CoroutineScope,
+    onRegister: () -> Unit
+) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text("Paso 3:Horario de sesion", style = MaterialTheme.typography.titleLarge)
         Spacer(Modifier.height(16.dp))
-        MyTimePicker(viewModel = viewModel)
-
+        TimePickerGenerico(
+            onTimeSelected = { hour,minute->
+            viewModel.onEvent(RegistroEvent.horaRespiracionChanged(hour))
+            viewModel.onEvent(RegistroEvent.minutoRespiracionchanged(minute))
+        })
+        //MyTimePicker(viewModel = viewModel)
         Spacer(Modifier.height(24.dp))
         Button(
             onClick = onRegister,
@@ -203,23 +238,3 @@ fun StepEstadoAnimo(state: RegistroState, viewModel: RegistroViewModel, coroutin
         }
     }
 }
-
-@Composable
-@ExperimentalMaterial3Api
-fun MyTimePicker(viewModel: RegistroViewModel) {
-    val state = rememberTimePickerState()
-    TimePicker(
-        state = state,
-        modifier = Modifier.padding(15.dp),
-        colors = TimePickerDefaults.colors(),
-        layoutType = TimePickerDefaults.layoutType()
-    )
-    Text(text = "Hora seleccionada H:M = ${state.hour} : ${state.minute}")
-    Button(onClick = {
-        viewModel.onEvent(RegistroEvent.horaRespiracionChanged(state.hour))
-        viewModel.onEvent(RegistroEvent.minutoRespiracionchanged(state.minute))
-    }) {
-        Text("Confirmar hora")
-    }
-}
-

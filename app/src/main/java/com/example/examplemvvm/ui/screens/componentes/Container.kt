@@ -76,7 +76,8 @@ fun Container(
             if (showBackButton) {
                 Box(
                     modifier = Modifier
-                        .size(48.dp)
+                        .size(40.dp)
+                        .clip(RoundedCornerShape(50))
                         .clickable(
                             indication = null,
                             interactionSource = remember { MutableInteractionSource() }
@@ -86,7 +87,7 @@ fun Container(
                     Image(
                         painter = painterResource(id = R.drawable.back),
                         contentDescription = "Atrás",
-                        modifier = Modifier.size(34.dp)
+                        modifier = Modifier.size(48.dp)
                     )
                 }
             } else {
@@ -109,18 +110,19 @@ fun Container(
             if (showHomeButton || showConfiguracion) {
                 Box(
                     modifier = Modifier
-                        .size(48.dp)
+                        .size(40.dp)
+                        .clip(RoundedCornerShape(50))
                         .clickable(
                             indication = null,
                             interactionSource = remember { MutableInteractionSource() }
                         ) { onHomeClick() },
                     contentAlignment = Alignment.Center
                 ) {
-                    val iconRes = if (showHomeButton) R.drawable.homeb else R.drawable.config
+                    val iconRes = if (showHomeButton) R.drawable.home else R.drawable.setting
                     Image(
                         painter = painterResource(id = iconRes),
                         contentDescription = "Botón derecho",
-                        modifier = Modifier.size(34.dp)
+                        modifier = Modifier.size(40.dp)
                     )
                 }
             } else {
@@ -128,7 +130,7 @@ fun Container(
             }
         }
 
-        // 🔹 Contenido principal con fondo redondeado
+        //Contenido principal de la aplicacion
         Box(
             modifier = Modifier
                 .padding(top = topPadding)

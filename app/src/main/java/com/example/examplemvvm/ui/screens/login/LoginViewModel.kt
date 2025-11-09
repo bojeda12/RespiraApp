@@ -78,30 +78,30 @@ class LoginViewModel @Inject constructor(
     }
     fun iniciarSesion(correo: String, contrasena: String) {
         viewModelScope.launch {
-            // 1️⃣ Limpiar errores previos
+            //Limpiamos los errores generados para que no se quede en alamacenados
             _emailError.value = ""
             _passwordError.value = ""
 
             var valido = true
-
-            // 2️⃣ Validar campos vacíos
+            // validamos los campos vacios
             if (correo.isEmpty()) {
                 _emailError.value = "El correo es obligatorio"
                 valido = false
             }
+
             if (contrasena.isEmpty()) {
                 _passwordError.value = "La contraseña es obligatoria"
                 valido = false
             }
 
-            // Si hay errores, no continuar
+            //en caso de que no haya errores continuamos
             if (!valido) return@launch
 
-            // 3️⃣ Buscar usuario
+            //Buscamos el usuaio en la base de datos
             val usuario = usuarioRepository.getUsuarios()
                 .find { it.correo == correo && it.contrasena == contrasena }
 
-            // 4️⃣ Manejar resultado
+            // Manejamos el resultado
             if (usuario != null) {
                 sesionManager.guardarSesion(usuario.id, usuario.nombre_usuario)
                 _navigationEvent.emit(NavigationTarget.Dashboard)
@@ -112,27 +112,6 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
-    fun validarCampos(correo: String, contrasena: String): Boolean {
-        var valido = true
-
-        if (correo.isEmpty()) {
-            _emailError.value = "El correo es obligatorio"
-            valido = false
-        } else {
-            _emailError.value = ""
-        }
-
-        if (contrasena.isEmpty()) {
-            _passwordError.value = "La contraseña es obligatoria"
-            valido = false
-        } else {
-            _passwordError.value = ""
-        }
-
-        return valido
-    }
-
-
     sealed class NavigationTarget{
         object Registro : NavigationTarget()
         object Dashboard : NavigationTarget()

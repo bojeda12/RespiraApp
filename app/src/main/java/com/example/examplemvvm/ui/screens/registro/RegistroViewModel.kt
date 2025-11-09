@@ -1,6 +1,7 @@
 package com.example.examplemvvm.ui.screens.registro
 
 import android.util.Log
+import android.util.Patterns
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -34,16 +35,28 @@ class RegistroViewModel @Inject constructor(private val usuarioRepository: Usuar
     //Validaciones Step 1
     suspend fun validarStep1(): Boolean {
         val s = state.value!!
+
         // Verifica campos vacíos
         if (s.nombreUsuario.isEmpty() || s.correo.isEmpty() || s.contrasena.isEmpty() || s.confirmarContrasena.isEmpty()) {
             emitirMensaje("Por favor completa todos los campos", AlertaTipo.ERROR)
             return false
         }
+
+        //Valida si el correo tiene el formato correcto
+        if (!isValidEmail(s.correo)){
+            emitirMensaje("Ingresa un correo valido ejemplo: pedro@gmail.com", AlertaTipo.INFO)
+            return false
+        }
+
+        //Se validan que la contrsena tenga el formato correcto y que coincidan
+        if (!validarPassword(s.contrasena , confirmarContrasena = s.confirmarContrasena)) return false
+
         // Verifica contraseñas coinciden
         if (s.contrasena != s.confirmarContrasena) {
             emitirMensaje("Las contraseñas no coinciden", AlertaTipo.INFO)
             return false
         }
+
         // Verifica si el correo ya existe en la base de datos
         if (usuarioRepository.existeUsuarioPorCorreo(s.correo)) {
             emitirMensaje("El correo ya está registrado", AlertaTipo.INFO)
@@ -152,4 +165,33 @@ class RegistroViewModel @Inject constructor(private val usuarioRepository: Usuar
             Log.d("UsuariosGuardados", usuarios.toString())
         }
     }
+    fun validarPassword(contrasena: String, confirmarContrasena: String = ""): Boolean {
+        if (contrasena.length < 8) {
+            emitirMensaje("La contraseña debe tener al menos 8 caracteres", AlertaTipo.INFO)
+            return false
+        }
+        if (!contrasena.any { it.isUpperCase() }) {
+            emitirMensaje("La contraseña debe contener al menos una letra mayúscula", AlertaTipo.INFO)
+            return false
+        }
+        if (!contrasena.any { it.isLowerCase() }) {
+            emitirMensaje("La contraseña debe contener al menos una letra minúscula", AlertaTipo.INFO)
+            return false
+        }
+        if (!contrasena.any { it.isDigit() }) {
+            emitirMensaje("La contraseña debe contener al menos un número", AlertaTipo.INFO)
+            return false
+        }
+        if (!contrasena.any { "!@#\$%^&*()-_=+{}[]|:;\"'<>,.?/".contains(it) }) {
+            emitirMensaje("La contraseña debe contener al menos un carácter especial", AlertaTipo.INFO)
+            return false
+        }
+        if (contrasena != confirmarContrasena) {
+            emitirMensaje("Las contraseñas no coinciden", AlertaTipo.INFO)
+            return false
+        }
+        return true
+    }
+
+    private fun isValidEmail(email:String): Boolean = Patterns.EMAIL_ADDRESS.matcher(email).matches()
 }
