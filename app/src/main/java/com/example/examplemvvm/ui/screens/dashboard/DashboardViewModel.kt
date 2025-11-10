@@ -1,8 +1,10 @@
 package com.example.examplemvvm.ui.screens.dashboard
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.examplemvvm.data.local.session.SesionManager
+import com.example.examplemvvm.domain.repository.EstadoAnimoRepository
 import com.example.examplemvvm.ui.screens.registro.RegistroEvent
 import com.example.examplemvvm.ui.screens.registro.RegistroViewModel
 import com.example.examplemvvm.ui.theme.login.ui.screens.login.LoginViewModel
@@ -15,13 +17,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import com.example.examplemvvm.R
 import javax.inject.Inject
 
 //import javax.inject.Inject
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
-    private val sesionManager: SesionManager
+    private val sesionManager: SesionManager,
+    private val estadoAnimoRepository: EstadoAnimoRepository
 ): ViewModel() {
 
     //pasamos el nombre de usuario que nos dio el sessionManager
@@ -66,6 +70,44 @@ class DashboardViewModel @Inject constructor(
             }
         }
     }
+    val ultimoEstadoTexto = MutableStateFlow("")
+    val ultimoEstadoIcono = MutableStateFlow(R.drawable.confused)
+    init {
+        viewModelScope.launch {
+            sesionManager.idUsuario.collect {
+                id ->
+                if(id!= null){
+                    val registro = estadoAnimoRepository.obtenerUltimoRegistro(id)
+                    when (registro?.estadoAnimo){
+                        "1" ->{
+                            ultimoEstadoTexto.value = "Muy bien"
+                            ultimoEstadoIcono.value = R.drawable.happyface
+                        }
+                        "2" ->{
+                            ultimoEstadoTexto.value = "Bien"
+                            ultimoEstadoIcono.value = R.drawable.happy
+                        }
+                        "3" ->{
+                            ultimoEstadoTexto.value = "Neutro"
+                            ultimoEstadoIcono.value = R.drawable.confused
+                        }
+                        "4" ->{
+                            ultimoEstadoTexto.value = "Mal"
+                            ultimoEstadoIcono.value = R.drawable.sad
+                        }
+                        "5" ->{
+                            ultimoEstadoTexto.value = "Muy Mal"
+                            ultimoEstadoIcono.value = R.drawable.sadface
+                        }
+                        else -> {
+                            ultimoEstadoTexto.value = "Sin registro"
+                            ultimoEstadoIcono.value = R.drawable.estadoa
+                        }
+                    }
+                }
+            }
+        }
+    }
     sealed class  NavigationTarget(){
         object Configuracion : NavigationTarget()
         object Estados: NavigationTarget()
@@ -73,14 +115,4 @@ class DashboardViewModel @Inject constructor(
         object Rutina1: NavigationTarget()
         object Historial: NavigationTarget()
     }
-
-    // CUANDO CONECTEMOS ROOM (ejemplo):
-    // val weekMoods: StateFlow<List<Int>> =
-    //     dao.getWeekMoodAverages(System.currentTimeMillis() - 6*24*60*60*1000)
-    //        .map { list ->                           // mapear 0..6 → L..D
-    //            val byDow = list.associate { it.dow.toInt() to it.avgMood }
-    //            val order = listOf(1,2,3,4,5,6,0)    // L..D
-    //            order.map { dow -> (byDow[dow] ?: 0f).coerceIn(1f,5f).roundToInt() }
-    //        }
-    //        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), emptyList())
 }
