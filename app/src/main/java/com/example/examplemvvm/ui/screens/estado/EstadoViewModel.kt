@@ -2,7 +2,6 @@ package com.example.examplemvvm.ui.screens.estado
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.examplemvvm.ui.screens.rutinas.RutinaViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
@@ -19,6 +18,11 @@ class EstadoViewModel : ViewModel() {
                     _navigationEvent.emit(EstadoViewModel.NavigationTarget.toBack)
                 }
             }
+            is EstadoEvent.btnMuyBienClicked -> {}
+            is EstadoEvent.btnBienClicked -> {}
+            is EstadoEvent.btnNeutroClicked -> {}
+            is EstadoEvent.btnMalClicked -> {}
+            is EstadoEvent.btnMuyMalClicked -> {}
         }
     }
 
