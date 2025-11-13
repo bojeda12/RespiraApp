@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -101,11 +102,7 @@ fun Dashboard(
         val nombre by viewModel.nombreUsuario.collectAsState()
 
         BienvenidaLabel(nombre)
-        Etiquetas(
-            "Ultimo estado de animo registrado: \uD83D\uDE01",
-            modifier = Modifier,
-            tamanoLetra = 12.sp
-        )
+        UltimoEstadoAnimo(viewModel)
         //Spacer(Modifier.height(20.dp))
         BotonBox(
             modifier = Modifier,
@@ -202,31 +199,30 @@ fun BotonBox(modifier: Modifier, texto: String, dibujo: Painter,onClick: () -> U
     }
 }
 
-
 @Composable
-fun RutinasRapidas(onClick: () -> Unit) {
+fun UltimoEstadoAnimo(viewModel: DashboardViewModel){
+    val estadoTexto by viewModel.ultimoEstadoTexto.collectAsState()
+    val estadoIcono by viewModel.ultimoEstadoIcono.collectAsState()
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(70.dp)
-            .padding(top = 10.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
+            .padding(horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        FloatingActionButtonExample("1 min",onClick)
-        FloatingActionButtonExample("3 min",onClick)
-        FloatingActionButtonExample("5 min",onClick)
-    }
-}
 
-@Composable
-fun FloatingActionButtonExample(texto: String,onClick: () -> Unit) {
-    FloatingActionButton(
-        onClick = {onClick()},
-        modifier = Modifier
-            .width(90.dp)
-    ) {
-        Text(texto)
+        Text(
+            text = "Último estado de ánimo registrado: $estadoTexto",
+            fontSize = 16.sp, fontWeight = FontWeight.Bold
+        )
+        Spacer(modifier = Modifier.width(12.dp))
+
     }
+    Image(
+        painter = painterResource(id = estadoIcono),
+        contentDescription = null,
+        modifier = Modifier.size(30.dp)
+    )
 }
 
 
