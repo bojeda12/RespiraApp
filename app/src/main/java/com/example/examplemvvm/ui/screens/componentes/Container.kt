@@ -36,6 +36,7 @@ import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -48,7 +49,8 @@ fun Container(
     topPadding: Dp =70.dp,
     horizontalPadding: Dp = 35.dp,
     cornerRadius: Dp = 30.dp,
-    backgroundColor: Color = MaterialTheme.colorScheme.background,
+    backgroundColor: Color = MaterialTheme.colorScheme.background
+    ,
     showBackButton: Boolean = false,
     showHomeButton: Boolean = false,
     showConfiguracion: Boolean = false,
@@ -62,7 +64,11 @@ fun Container(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF1A78C5))
+            .background(
+                Brush.radialGradient(
+                    colors = listOf(Color(0xFF619C64), Color(0xFF5C8FC3))
+                )
+            )//0xFF1A78C5
             .windowInsetsPadding(WindowInsets.statusBars) // ✅ padding dinámico para status bar
     ) {
         // 🔹 Encabezado con botones alineados

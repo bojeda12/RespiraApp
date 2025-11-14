@@ -31,12 +31,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.examplemvvm.R
 import com.example.examplemvvm.ui.screens.componentes.Container
 
 @Composable
 fun RutinaScreen(
-    viewModel: RutinaViewModel = RutinaViewModel(),
+    viewModel: RutinaViewModel = hiltViewModel(),
     navegarToRespira: () -> Unit,
     navegarBackDashboard: () -> Unit
 ) {
@@ -57,7 +58,7 @@ fun RutinaScreen(
     ) {
         Rutina(
             modifier = Modifier,
-            viewModel = viewModel,
+            viewModel,
             navegarToRespira = navegarToRespira
         )
     }

@@ -103,13 +103,13 @@ fun Dashboard(
 
         BienvenidaLabel(nombre)
         UltimoEstadoAnimo(viewModel)
-        //Spacer(Modifier.height(20.dp))
+        Spacer(Modifier.height(20.dp))
         BotonBox(
             modifier = Modifier,
             "Registra tu animo",
             painterResource(id = R.drawable.estadoa)
         ){viewModel.onEvent(DashboardEvent.BntEstadoClicked)}
-        //Spacer(Modifier.height(15.dp))
+        Spacer(Modifier.height(15.dp))
         BotonBox(modifier = Modifier,
             "Elegir Rutina",
             painterResource(id = R.drawable.rutina)
@@ -121,11 +121,12 @@ fun Dashboard(
         )
        // RutinasRapidas(){viewModel.onEvent(DashboardEvent.BtnRutina1Clicked)}*/
         //Etiquetas(texto = "Historial", modifier = Modifier.clickable {viewModel.onEvent(DashboardEvent.BtnHistorialClicked)}, tamanoLetra = 18.sp)
+        Spacer(Modifier.height(15.dp))
         BotonBox(modifier = Modifier,
             "Historial",
             painterResource(id = R.drawable.historial)
         ){viewModel.onEvent(DashboardEvent.BtnHistorialClicked)}
-        //Spacer(Modifier.height(30.dp))
+        Spacer(Modifier.height(30.dp))
         Grafica(moodsByDay = listOf(1, 2, 2, 3, 3, 3, 5))
         Etiquetas(
             texto = "Horario recomendado para respirar: 6:00 PM",
@@ -213,7 +214,7 @@ fun UltimoEstadoAnimo(viewModel: DashboardViewModel){
 
         Text(
             text = "Último estado de ánimo registrado: $estadoTexto",
-            fontSize = 16.sp, fontWeight = FontWeight.Bold
+            fontSize = 16.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.width(12.dp))
 
