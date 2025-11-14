@@ -29,7 +29,7 @@ class UsuarioRepositoryImpl @Inject constructor(
         Log.d("Registro", "Insertando sesión con id_usuario = ${idUsuario}")
 
         estadoAnimoDao.insertarEstado(estado.toEntity(idUsuario))
-        sesionRespiracion.insertarSesion(sesion.toEntity(idUsuario))
+        sesionRespiracion.guardarSesion(sesion.toEntity(idUsuario))
     }
     override suspend fun getUsuarios(): List<Usuario> {
         return usuarioDao.getAllUsuarios().map { it.toModel() }

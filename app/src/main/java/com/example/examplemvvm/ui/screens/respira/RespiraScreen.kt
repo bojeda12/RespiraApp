@@ -7,14 +7,22 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,20 +35,34 @@ import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.shadow.Shadow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.room.util.TableInfo
 import com.example.examplemvvm.ui.screens.componentes.Container
-import com.example.examplemvvm.ui.screens.rutinas.RutinaViewModel
 import kotlinx.coroutines.delay
 
 
 @Composable
-fun RespiraScreen(viewModel: RespiraViewModel = RespiraViewModel(), goToDashboard: () -> Unit) {
+fun RespiraScreen(
+    viewModel: RespiraViewModel = hiltViewModel(),
+    goToDashboard: () -> Unit
+) {
+    val activo by viewModel.cronometroActivo.collectAsState()
+    val tiempoMillis by viewModel.tiempoTranscurrido.collectAsState()
+
+    // formato mm:ss
+    val segundosTotales = (tiempoMillis / 1000L).toInt()
+    val minutos = segundosTotales / 60
+    val segundos = segundosTotales % 60
+    val tiempoDisplay = String.format("%02d:%02d", minutos, segundos)
+
+
     LaunchedEffect(Unit) {
+        //viewModel.iniciarRutina(rutinaIdArg)
         viewModel.navigationEvent.collect { event ->
             when (event) {
-                is RespiraViewModel.NavigationTarget.goToDashboard -> goToDashboard()
+                is RespiraViewModel.NavigationTarget.GoToDashboard -> goToDashboard()
             }
         }
     }
@@ -50,7 +72,28 @@ fun RespiraScreen(viewModel: RespiraViewModel = RespiraViewModel(), goToDashboar
         onHomeClick = {viewModel.onEvent(RespiraEvent.btnDashboardClicked)},
         encabezado = "Hora de respirar"
     ) {
-        RespireAnimation()
+        Column(
+            modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            //Text(viewModel.rutinaIdLocal.toString())
+            //Text(viewModel.idUser.toString())
+            RespireAnimation()
+            Spacer(Modifier.height(24.dp))
+            Text(text = "Duracion:$tiempoDisplay")
+            Spacer(Modifier.height(16.dp))
+            if(!activo){
+                Button(onClick = {viewModel.onEvent(RespiraEvent.BtnStartClicked)}) {
+                    Text("Iniciar")
+                }
+            }else{
+                Button(onClick = { viewModel.onEvent(RespiraEvent.BtnStopClicked) }) {
+                    Text("Detener")
+                }
+            }
+        }
+        //RespireAnimation()
     }
 
 }

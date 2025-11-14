@@ -213,7 +213,7 @@ fun UltimoEstadoAnimo(viewModel: DashboardViewModel){
 
         Text(
             text = "Último estado de ánimo registrado: $estadoTexto",
-            fontSize = 16.sp, fontWeight = FontWeight.Bold
+            fontSize = 16.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.width(12.dp))
 

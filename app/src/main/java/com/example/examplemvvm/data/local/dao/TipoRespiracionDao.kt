@@ -13,4 +13,5 @@ interface TipoRespiracionDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTipo(tipo: TipoRespiracionEntity)
+
 }

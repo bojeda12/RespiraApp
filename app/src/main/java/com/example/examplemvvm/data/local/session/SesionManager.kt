@@ -3,6 +3,7 @@ package com.example.examplemvvm.data.local.session
 import android.content.Context
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -20,6 +21,11 @@ class SesionManager @Inject constructor(@ApplicationContext context: Context) {
     companion object {
         val ID_USUARIO = intPreferencesKey("id_usuario")
         val NOMBRE_USUARIO = stringPreferencesKey("nombre_usuario")
+
+        val RUTINA_ID = intPreferencesKey("rutina_id")
+
+        val RUTINA_HORA_INICIO = longPreferencesKey("rutina_hora_inicio")
+
     }
 
     // Usamos appContext para acceder a dataStore
@@ -41,6 +47,18 @@ class SesionManager @Inject constructor(@ApplicationContext context: Context) {
             prefs.clear()
         }
     }
+    // Guardar solo el id de la rutina en sesión
+    suspend fun guardarRutinaId(idRutina: Int) {
+        appContext.dataStore.edit { prefs ->
+            prefs[RUTINA_ID] = idRutina
+        }
+    }
+
+    // Flow que expone el id de la rutina (puede ser null si no existe)
+    val rutinaId: Flow<Int?> = appContext.dataStore.data
+        .map { it[RUTINA_ID] }
+
+
 }
 
 

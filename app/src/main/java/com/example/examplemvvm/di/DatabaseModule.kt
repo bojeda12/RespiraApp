@@ -11,8 +11,10 @@ import com.example.examplemvvm.data.local.dao.UsuarioDao
 import com.example.examplemvvm.data.local.database.AppDatabase
 import com.example.examplemvvm.data.local.session.SesionManager
 import com.example.examplemvvm.data.repository.EstadoAnimoRepositoryImpl
+import com.example.examplemvvm.data.repository.SesionRespiracionRepositoryImpl
 import com.example.examplemvvm.data.repository.UsuarioRepositoryImpl
 import com.example.examplemvvm.domain.repository.EstadoAnimoRepository
+import com.example.examplemvvm.domain.repository.SesionRespiracionRepository
 import com.example.examplemvvm.domain.repository.UsuarioRepository
 import dagger.Module
 import dagger.Provides
@@ -61,7 +63,8 @@ object DatabaseModule {
     ): EstadoAnimoRepository {
         return EstadoAnimoRepositoryImpl(registroEstadoAnimoDao,sesionManager)
     }
-
-
+    @Provides
+    fun provideSesionRespiracionRepository(sesionRespiracionDao: SesionRespiracionDao): SesionRespiracionRepository =
+        SesionRespiracionRepositoryImpl(sesionRespiracionDao)
 
 }
