@@ -3,14 +3,7 @@ package com.example.examplemvvm.ui.screens.estado
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,59 +16,75 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.examplemvvm.R
 import com.example.examplemvvm.ui.screens.componentes.Container
 
-
-
 @Composable
-fun EstadoScreen(viewModel: EstadoViewModel = EstadoViewModel(), navegarToDashboard: () -> Unit) {
+fun EstadoScreen(
+    viewModel: EstadoViewModel = hiltViewModel(),
+    navegarToDashboard: () -> Unit
+) {
     LaunchedEffect(Unit) {
         viewModel.navigationEvent.collect { event ->
             when (event) {
-                is EstadoViewModel.NavigationTarget.toBack -> navegarToDashboard()
+                is EstadoViewModel.NavigationTarget.ToBack-> navegarToDashboard()
             }
         }
     }
+
     Container(
         showEncabezado = true,
         showBackButton = true,
-        onBackClick = {viewModel.onEvent(EstadoEvent.btnBackClicked)},
-        encabezado = "ELIGE ESTADO DE ANIMO"
+        onBackClick = { viewModel.onEvent(EstadoEvent.btnBackClicked) },
+        encabezado = "ELIGE ESTADO DE ÁNIMO"
     ) {
-        Estados()
+        Estados(viewModel)
     }
-
 }
 
-
 @Composable
-fun Estados() {
+fun Estados(viewModel: EstadoViewModel) {
+    val opciones = listOf(
+        "Muy bien" to "1",
+        "Bien" to "2",
+        "Neutro" to "3",
+        "Mal" to "4",
+        "Muy mal" to "5"
+    )
 
     Column(
         modifier = Modifier
             .padding(top = 50.dp)
             .height(550.dp),
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            LblEstado()
-            BotonEstados(estado = "Muy bien", dibuja = painterResource(id = R.drawable.happyface)){}
-            BotonEstados(estado = "Bien", dibuja = painterResource(id = R.drawable.happy)){}
-            BotonEstados(estado = "Neutro", dibuja = painterResource(id = R.drawable.confused)){}
-            BotonEstados(estado = "Mal", dibuja = painterResource(id = R.drawable.sad)){}
-            BotonEstados(estado = "Muy mal", dibuja = painterResource(id = R.drawable.sadface)){}
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        LblEstado()
+        opciones.forEach { (texto, iconoRes) ->
+            val icono = when (iconoRes) {
+                "1" -> painterResource(id = R.drawable.happyface)
+                "2" -> painterResource(id = R.drawable.happy)
+                "3" -> painterResource(id = R.drawable.confused)
+                "4" -> painterResource(id = R.drawable.sad)
+                else -> painterResource(id = R.drawable.sadface)
+            }
+            BotonEstados(
+                estado = texto,
+                dibuja = icono
+            )
+            {
+                viewModel.onEvent(EstadoEvent.EstadoSeleccionado(iconoRes))
+            }
         }
-
     }
-
+}
 
 @Composable
 fun LblEstado() {
     Text(
-        "Como te sientes el dia de hoy",
+        text = "¿Cómo te sientes hoy?",
         modifier = Modifier.fillMaxWidth(),
         textAlign = TextAlign.Center,
         fontSize = 30.sp
@@ -85,9 +94,9 @@ fun LblEstado() {
 @Composable
 fun BotonEstados(
     modifier: Modifier = Modifier,
-    estado: String = "",
+    estado: String,
     dibuja: Painter,
-    isSelected: Boolean = false, // Nuevo parámetro
+    isSelected: Boolean = false,
     onClick: () -> Unit
 ) {
     val backgroundColor = if (isSelected) Color(0xFF347771) else Color(0xFF359B94)
@@ -97,13 +106,12 @@ fun BotonEstados(
         modifier = modifier
             .fillMaxWidth()
             .height(80.dp)
-            .clip(shape = RoundedCornerShape(35))
+            .clip(RoundedCornerShape(35.dp))
             .background(backgroundColor)
-            .clickable { onClick() } // Manejamos el click
+            .clickable { onClick() }
     ) {
-        // Icono al inicio
         Box(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 22.dp, start = 20.dp),
             contentAlignment = Alignment.TopStart
@@ -115,16 +123,15 @@ fun BotonEstados(
             )
         }
 
-        // Texto centrado
         Box(
-            modifier.align(Alignment.Center),
+            modifier = Modifier.align(Alignment.Center),
             contentAlignment = Alignment.Center
         ) {
             Text(
-                estado,
+                text = estado,
                 color = textColor,
                 fontSize = 18.sp,
-                modifier = modifier.width(180.dp),
+                modifier = Modifier.width(180.dp),
                 textAlign = TextAlign.Center,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
@@ -132,5 +139,3 @@ fun BotonEstados(
         }
     }
 }
-
-
