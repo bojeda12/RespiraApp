@@ -22,9 +22,31 @@ import javax.inject.Inject
 @HiltViewModel
 class RespiraViewModel @Inject constructor(
     private val sesionManager: SesionManager,
-    private val sesionRepository: SesionRespiracionRepository
+    private val sesionRepository: SesionRespiracionRepository,
+    private val tipoRespDao: TipoRespiracionDao
 ): ViewModel() {
+    init {
+        // Pre-poblar tipos de respiración al iniciar
+        prePoblarTiposRespiracion()
+    }
 
+    /** Pre-pobla los tipos de respiración si la tabla está vacía */
+    private fun prePoblarTiposRespiracion() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val tipos = tipoRespDao.getAllTipos()
+            if (tipos.isEmpty()) {
+                tipoRespDao.insertTipo(
+                    TipoRespiracionEntity(
+                        id = 1,
+                        nomRespiracion = "Respiración Profunda"
+                    )
+                )
+                tipoRespDao.insertTipo(TipoRespiracionEntity(id = 2, nomRespiracion = "Respiración Completa"))
+                tipoRespDao.insertTipo(TipoRespiracionEntity(id = 3, nomRespiracion = "Respiración Dormir Mejor"))
+                tipoRespDao.insertTipo(TipoRespiracionEntity(id = 4, nomRespiracion = "Respiración Abeja"))
+            }
+        }
+    }
     //definimos las variables para nuestra navegacion
     private val _navigationEvent = MutableSharedFlow<RespiraViewModel.NavigationTarget>()
     val navigationEvent = _navigationEvent.asSharedFlow()
