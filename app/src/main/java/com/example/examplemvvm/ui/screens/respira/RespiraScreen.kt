@@ -1,23 +1,36 @@
 package com.example.examplemvvm.ui.screens.respira
 
+import android.widget.Space
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,8 +48,10 @@ import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.shadow.Shadow
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.room.util.TableInfo
 import com.example.examplemvvm.ui.screens.componentes.Container
@@ -50,52 +65,96 @@ fun RespiraScreen(
 ) {
     val activo by viewModel.cronometroActivo.collectAsState()
     val tiempoMillis by viewModel.tiempoTranscurrido.collectAsState()
+    val context = LocalContext.current
 
-    // formato mm:ss
     val segundosTotales = (tiempoMillis / 1000L).toInt()
     val minutos = segundosTotales / 60
     val segundos = segundosTotales % 60
     val tiempoDisplay = String.format("%02d:%02d", minutos, segundos)
 
 
+
     LaunchedEffect(Unit) {
-        //viewModel.iniciarRutina(rutinaIdArg)
         viewModel.navigationEvent.collect { event ->
             when (event) {
                 is RespiraViewModel.NavigationTarget.GoToDashboard -> goToDashboard()
             }
         }
     }
-    Container(
-        showEncabezado = true,
-        showHomeButton = true,
-        onHomeClick = {viewModel.onEvent(RespiraEvent.btnDashboardClicked)},
-        encabezado = "Hora de respirar"
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(Color(0xFFa8dadc), Color(0xFF457b9d))
+                )
+            )
+            .padding(24.dp)
     ) {
+
         Column(
-            modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            //Text(viewModel.rutinaIdLocal.toString())
-            //Text(viewModel.idUser.toString())
-            RespireAnimation()
+            Text(
+                text = "Hora de respirar",
+                style = MaterialTheme.typography.headlineMedium,
+                color = Color.White
+            )
+
+            Spacer(Modifier.height(32.dp))
+
+
+            RespireAnimation(activo = activo)
+
+
+            Spacer(Modifier.height(32.dp))
+
+            Text(
+                text = "Duración: $tiempoDisplay",
+                style = MaterialTheme.typography.titleLarge,
+                color = Color.White
+            )
+
             Spacer(Modifier.height(24.dp))
-            Text(text = "Duracion:$tiempoDisplay")
-            Spacer(Modifier.height(16.dp))
-            if(!activo){
-                Button(onClick = {viewModel.onEvent(RespiraEvent.BtnStartClicked)}) {
-                    Text("Iniciar")
+
+            if (!activo) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Button(
+                        onClick = { viewModel.onEvent(RespiraEvent.BtnStartClicked) },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF52b788))
+                    ) {
+                        Text("Iniciar", color = Color.White)
+                    }
+                    Spacer(Modifier.width(10.dp))
+                    Button(
+                        onClick = { viewModel.onEvent(RespiraEvent.btnDashboardClicked) },
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF2196F3))
+                    ) {
+                        Text("Salir", color = Color.White)
+                    }
+
                 }
-            }else{
-                Button(onClick = { viewModel.onEvent(RespiraEvent.BtnStopClicked) }) {
-                    Text("Detener")
+
+            } else {
+                Button(
+                    onClick = { viewModel.onEvent(RespiraEvent.BtnStopClicked) },
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFe76f51))
+                ) {
+                    Text("Detener", color = Color.White)
                 }
             }
         }
-        //RespireAnimation()
-    }
 
+
+    }
 }
 
 @Composable
@@ -109,26 +168,13 @@ enum class BreathingState {
 }
 
 @Composable
-fun RespireAnimation() {
-    val colors = listOf(
-        Color(0xFFa8dadc), // turquesa suave
-        Color(0xFF457b9d), // azul verdoso profundo
-        Color(0xFF2a9d8f), // verde turquesa
-        Color(0xFF52b788), // verde menta
-        Color(0xFF74c69d), // verde claro
-        Color(0xFF95d5b2), // verde pastel
-        Color(0xFFb7e4c7), // verde agua
-        Color(0xFFcaffbf), // verde muy claro
-        Color(0xFF80ed99), // verde vibrante
-        Color(0xFF38b000), // verde intenso
-        Color(0xFFa8dadc)  // repetido para cerrar el gradiente
-    )
+fun RespireAnimation(activo: Boolean) {
+    if (!activo) return
 
     var breathingState by remember { mutableStateOf(BreathingState.Inhaling) }
 
     val transition = updateTransition(targetState = breathingState, label = "breathing_transition")
 
-    // Duraciones
     val inhaleDuration = 4000
     val exhaleDuration = 4000
     val holdDuration = 2000
@@ -155,27 +201,11 @@ fun RespireAnimation() {
         }
     }
 
-    val animatedSpread by transition.animateFloat(
-        transitionSpec = {
-            if (targetState == BreathingState.Inhaling)
-                tween(inhaleDuration, easing = FastOutSlowInEasing)
-            else
-                tween(exhaleDuration, easing = FastOutSlowInEasing)
-        },
-        label = "spread_animation"
-    ) { state ->
-        if (state == BreathingState.Inhaling) 10f else 2f
-    }
-
-    // ✅ Aquí ya no usamos animateFloat, solo valor fijo
-    val animatedAlpha = 1f
-
     val breathingText = when (breathingState) {
         BreathingState.Inhaling -> "Inhala"
         BreathingState.Exhaling -> "Exhala"
     }
 
-    // Ciclo de respiración
     LaunchedEffect(breathingState) {
         val duration =
             if (breathingState == BreathingState.Inhaling) inhaleDuration else exhaleDuration
@@ -183,6 +213,7 @@ fun RespireAnimation() {
         breathingState = if (breathingState == BreathingState.Inhaling)
             BreathingState.Exhaling else BreathingState.Inhaling
     }
+    val borderWidth = (animatedSize.value * 0.02f).dp // 1% del tamaño
 
     Box(
         modifier = Modifier.fillMaxSize(),
@@ -191,24 +222,27 @@ fun RespireAnimation() {
         Box(
             modifier = Modifier
                 .size(animatedSize)
-                .dropShadow(
-                    shape = RoundedCornerShape(70.dp),
-                    shadow = Shadow(
-                        radius = 10.dp,
-                        spread = animatedSpread.dp,
-                        brush = Brush.sweepGradient(colors),
-                        offset = DpOffset(0.dp, 0.dp),
-                        alpha = animatedAlpha // valor fijo aquí
+                .clip(CircleShape)
+                .background(
+                    Brush.radialGradient(
+                        colors = listOf(
+                            Color.White.copy(alpha = 0.3f),
+                            Color.White.copy(alpha = 0.05f)
+                        ),
+                        radius = animatedSize.value * 0.6f
                     )
                 )
-                .clip(RoundedCornerShape(70.dp))
-                .background(Color(0xEDFFFFFF)),
+                .border(
+                    width = borderWidth,
+                    color = Color.White.copy(alpha = 0.4f),
+                    shape = CircleShape
+                ),
             contentAlignment = Alignment.Center
         ) {
             Text(
                 text = breathingText,
                 modifier = Modifier.alpha(textAlpha),
-                color = Color.Black,
+                color = Color.White,
                 style = MaterialTheme.typography.headlineMedium
             )
         }

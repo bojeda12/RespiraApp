@@ -1,6 +1,7 @@
 package com.example.examplemvvm.ui.screens.respira
 
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.examplemvvm.data.local.dao.TipoRespiracionDao
@@ -62,6 +63,10 @@ class RespiraViewModel @Inject constructor(
      private var idUser:Int =0
     private var horaInicioMillisLocal : Long = 0L
 
+
+
+
+
     fun iniciarRutina() {
         viewModelScope.launch {
            val rutinaId = sesionManager.rutinaId.firstOrNull()
@@ -91,9 +96,18 @@ class RespiraViewModel @Inject constructor(
             val fecha = LocalDate.now().toString() // yyyy-MM-dd
             val horaInicioFormateada = formatMillisToHourMinute(horaInicioMillisLocal)
             val idUsuario = sesionManager.idUsuario.firstOrNull() ?: 0
-            if (idUsuario == null) {
-                return@launch
-            }
+
+            /*pasamos el tiempo del cronometro formateado,
+             ya que en la bd se pasa como un entero entonces tenemos
+             que reformatear el numero en caso de que lo queramos visualizar con
+             el formato 00:00*/
+
+            val minutos = duracionSegundos / 60
+            val segundos = duracionSegundos % 60
+            val duracionFormateada = String.format("%02d:%02d", minutos, segundos)
+
+            Log.d("RespiraViewModel", "Duración formateada: $duracionFormateada")
+
             val entidad = SesionRespiracionEntity(
                 fecha = fecha,
                 duracion = duracionSegundos,
@@ -104,6 +118,8 @@ class RespiraViewModel @Inject constructor(
 
             sesionRepository.guardarSesion(entidad)
 
+            _navigationEvent.emit(NavigationTarget.GoToDashboard)
+
             // guardar solo id de la rutina en DataStore/session
             //sesionManager.guardarRutinaId(rutinaIdLocal)
 
@@ -111,8 +127,8 @@ class RespiraViewModel @Inject constructor(
             _tiempoTranscurrido.value = 0L
             horaInicioMillisLocal = 0L
             rutinaIdLocal = 0
+            sesionManager.guardarRutinaId(0)
 
-            _navigationEvent.emit(NavigationTarget.GoToDashboard)
         }
     }
 
