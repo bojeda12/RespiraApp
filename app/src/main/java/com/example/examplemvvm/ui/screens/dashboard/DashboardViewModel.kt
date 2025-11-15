@@ -45,7 +45,7 @@ class DashboardViewModel @Inject constructor(
             is DashboardEvent.BtnConfiguracionClicked-> {
                 viewModelScope.launch {
                     _navigationEvent.emit(DashboardViewModel.NavigationTarget.Configuracion)
-                    sesionManager.cerrarSesion()
+                    //sesionManager.cerrarSesion()
                 }
             }
             is DashboardEvent.BntEstadoClicked -> {

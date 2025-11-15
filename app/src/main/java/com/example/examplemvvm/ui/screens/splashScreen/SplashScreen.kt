@@ -2,7 +2,9 @@ package com.example.examplemvvm.ui.screens.splashScreen
 
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,32 +24,19 @@ fun SplashScreen(
 ) {
     val haySesion by viewModel.haySesion.collectAsState()
 
-    // Usamos Unit para que solo se ejecute una vez
-    LaunchedEffect(Unit) {
-        delay(1000)
-
-        // Esperamos a que el estado esté disponible
-        if (haySesion) {
-            navController.navigate(Screens.DASHBOARD) {
-                popUpTo(Screens.SPLASH) { inclusive = true }
-            }
-        } else {
-            navController.navigate(Screens.LOGIN) {
+    LaunchedEffect(haySesion) {
+        haySesion?.let { tieneSesion ->
+            navController.navigate(
+                if (tieneSesion) Screens.DASHBOARD else Screens.LOGIN
+            ) {
                 popUpTo(Screens.SPLASH) { inclusive = true }
             }
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(32.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.respira1),
-            contentDescription = "Logo"
-        )
-    }
+    // Pantalla invisible: sin contenido, sin fondo
+    //Box(modifier = Modifier.fillMaxSize())
 }
+
+
 

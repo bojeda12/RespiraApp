@@ -108,6 +108,9 @@ dependencies {
 
     //para usar el LazyVerticalGrid
     implementation("androidx.compose.foundation:foundation:1.5.0")
+    // se usa para que no se muestre la splash por defecto de android
+    implementation("androidx.core:core-splashscreen:1.0.1")
+
 
 
 
