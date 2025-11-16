@@ -21,6 +21,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -75,7 +76,8 @@ fun DashboardScreen(
         encabezado = "DASHBOARD"
     ) {
         Dashboard(
-            modifier = Modifier, viewModel = viewModel,
+            modifier = Modifier,
+            viewModel = viewModel,
             navegarToEstados = navegarToEstados,
             navegarToRespirarRutinas = navegarToRespirarRutinas,
             navegarToRespirar = navegarToRespirar,
@@ -86,7 +88,8 @@ fun DashboardScreen(
 
 @Composable
 fun Dashboard(
-    modifier: Modifier, viewModel: DashboardViewModel,
+    modifier: Modifier,
+    viewModel: DashboardViewModel,
     navegarToEstados: () -> Unit,
     navegarToRespirarRutinas: () -> Unit,
     navegarToRespirar: () -> Unit,
@@ -100,6 +103,12 @@ fun Dashboard(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         val nombre by viewModel.nombreUsuario.collectAsState()
+        //variable para ingresar los moods a la grafica
+        val moods by viewModel.moodsByDay.collectAsState()
+        LaunchedEffect(Unit) {
+            viewModel.cargarEstadoFrecuenteSemanaActual()
+        }
+
 
         BienvenidaLabel(nombre)
         UltimoEstadoAnimo(viewModel)
@@ -127,7 +136,15 @@ fun Dashboard(
             painterResource(id = R.drawable.historial)
         ){viewModel.onEvent(DashboardEvent.BtnHistorialClicked)}
         Spacer(Modifier.height(30.dp))
-        Grafica(moodsByDay = listOf(1, 2, 2, 3, 3, 3, 5))
+
+        Text("Estado de ánimo semanal", style = MaterialTheme.typography.titleMedium)
+        if (moods.all { it == 0 }) {
+            Text("No hay datos registrados esta semana")
+        } else {
+            Grafica(moodsByDay = moods)
+        }
+
+
         Etiquetas(
             texto = "Horario recomendado para respirar: 6:00 PM",
             modifier = Modifier,

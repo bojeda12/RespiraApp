@@ -18,14 +18,20 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import com.example.examplemvvm.R
+import com.example.examplemvvm.data.local.dao.RegistroEstadoAnimoDao
+import kotlinx.coroutines.flow.first
+import java.time.DayOfWeek
+import java.time.LocalDate
 import javax.inject.Inject
+import kotlin.math.roundToInt
 
 //import javax.inject.Inject
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
     private val sesionManager: SesionManager,
-    private val estadoAnimoRepository: EstadoAnimoRepository
+    private val estadoAnimoRepository: EstadoAnimoRepository,
+    private val registroEstadoAnimoDao: RegistroEstadoAnimoDao
 ): ViewModel() {
 
     //pasamos el nombre de usuario que nos dio el sessionManager
@@ -79,11 +85,11 @@ class DashboardViewModel @Inject constructor(
                 if(id!= null){
                     val registro = estadoAnimoRepository.obtenerUltimoRegistro(id)
                     when (registro?.estadoAnimo){
-                        "1" ->{
+                        "5" ->{
                             ultimoEstadoTexto.value = "Muy bien"
                             ultimoEstadoIcono.value = R.drawable.happyface
                         }
-                        "2" ->{
+                        "4" ->{
                             ultimoEstadoTexto.value = "Bien"
                             ultimoEstadoIcono.value = R.drawable.happy
                         }
@@ -91,11 +97,11 @@ class DashboardViewModel @Inject constructor(
                             ultimoEstadoTexto.value = "Neutro"
                             ultimoEstadoIcono.value = R.drawable.confused
                         }
-                        "4" ->{
+                        "2" ->{
                             ultimoEstadoTexto.value = "Mal"
                             ultimoEstadoIcono.value = R.drawable.sad
                         }
-                        "5" ->{
+                        "1" ->{
                             ultimoEstadoTexto.value = "Muy Mal"
                             ultimoEstadoIcono.value = R.drawable.sadface
                         }
@@ -108,6 +114,35 @@ class DashboardViewModel @Inject constructor(
             }
         }
     }
+
+    //Cargar estados de la grafica
+    private val _moodsByDay = MutableStateFlow(List(7) { 0 }) // Lunes a Domingo
+    val moodsByDay: StateFlow<List<Int>> = _moodsByDay
+
+    fun cargarEstadoFrecuenteSemanaActual() {
+        viewModelScope.launch {
+            val idUsuario = sesionManager.idUsuario.first() ?: return@launch
+
+            val hoy = LocalDate.now()
+            val inicioSemana = hoy.with(DayOfWeek.MONDAY).toString()
+            val finSemana = hoy.with(DayOfWeek.SUNDAY).toString()
+
+            val datos = registroEstadoAnimoDao.obtenerEstadoAnimoMasFrecuentePorDia(idUsuario, inicioSemana, finSemana)
+            val mapa = datos.mapNotNull {
+                val dia = it.diaSemana.toIntOrNull()
+                val emocion = it.estadoAnimo?.toIntOrNull()
+                if (dia != null && emocion != null) dia to emocion else null
+            }.toMap()
+
+
+            val orden = listOf(1, 2, 3, 4, 5, 6, 0)
+            _moodsByDay.value = orden.map { dia -> mapa[dia] ?: 0 }
+        }
+    }
+
+
+
+
     sealed class  NavigationTarget(){
         object Configuracion : NavigationTarget()
         object Estados: NavigationTarget()

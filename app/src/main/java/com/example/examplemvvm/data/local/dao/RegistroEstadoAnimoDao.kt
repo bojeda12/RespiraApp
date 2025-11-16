@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.examplemvvm.data.local.entities.RegistroEstadoAnimoEntity
+import com.example.examplemvvm.domain.model.EstadoFrecuenteDia
 
 @Dao
 interface RegistroEstadoAnimoDao {
@@ -16,5 +17,31 @@ interface RegistroEstadoAnimoDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertarEstado(estado: RegistroEstadoAnimoEntity)
+
+    @Query("""
+    SELECT diaSemana, estadoAnimo
+    FROM (
+        SELECT 
+            strftime('%w', fecha) AS diaSemana,
+            estadoAnimo,
+            COUNT(*) AS frecuencia
+        FROM RegistroEstadoAnimo
+        WHERE id_usuario = :idUsuario
+          AND estadoAnimo IN ('1','2','3','4','5')
+          AND fecha BETWEEN :inicioSemana AND :finSemana
+        GROUP BY diaSemana, estadoAnimo
+    )
+    GROUP BY diaSemana
+    HAVING MAX(frecuencia)
+""")
+    suspend fun obtenerEstadoAnimoMasFrecuentePorDia(
+        idUsuario: Int,
+        inicioSemana: String,
+        finSemana: String
+    ): List<EstadoFrecuenteDia>
+
+
+
+
 
 }

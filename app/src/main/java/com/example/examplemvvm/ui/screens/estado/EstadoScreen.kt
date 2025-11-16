@@ -48,11 +48,11 @@ fun EstadoScreen(
 @Composable
 fun Estados(viewModel: EstadoViewModel) {
     val opciones = listOf(
-        "Muy bien" to "1",
-        "Bien" to "2",
+        "Muy bien" to "5",
+        "Bien" to "4",
         "Neutro" to "3",
-        "Mal" to "4",
-        "Muy mal" to "5"
+        "Mal" to "2",
+        "Muy mal" to "1"
     )
 
     Column(
@@ -64,10 +64,10 @@ fun Estados(viewModel: EstadoViewModel) {
         LblEstado()
         opciones.forEach { (texto, iconoRes) ->
             val icono = when (iconoRes) {
-                "1" -> painterResource(id = R.drawable.happyface)
-                "2" -> painterResource(id = R.drawable.happy)
+                "5" -> painterResource(id = R.drawable.happyface)
+                "4" -> painterResource(id = R.drawable.happy)
                 "3" -> painterResource(id = R.drawable.confused)
-                "4" -> painterResource(id = R.drawable.sad)
+                "2" -> painterResource(id = R.drawable.sad)
                 else -> painterResource(id = R.drawable.sadface)
             }
             BotonEstados(

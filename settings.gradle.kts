@@ -28,4 +28,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "ExampleMVVM"
 include(":app")
- 
+include(":app:examplemvvm")

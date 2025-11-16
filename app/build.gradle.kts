@@ -83,6 +83,8 @@ dependencies {
     implementation("com.patrykandpatrick.vico:core:1.14.0")
     implementation("com.patrykandpatrick.vico:compose:1.14.0")
     implementation("com.patrykandpatrick.vico:compose-m3:1.14.0")
+
+    
 // Room components
     implementation("androidx.room:room-runtime:${room_version}")
     ksp("androidx.room:room-compiler:$room_version")
