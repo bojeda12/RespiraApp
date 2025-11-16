@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -35,12 +36,17 @@ import androidx.compose.material3.TimePickerDefaults
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.examplemvvm.ui.components.AlertaSnackBar
+import com.example.examplemvvm.ui.components.AlertaTipo
 import com.example.examplemvvm.ui.screens.componentes.TxtFieldGeneral
-import dagger.hilt.android.lifecycle.HiltViewModel
+import com.example.examplemvvm.ui.screens.registro.RegistroState
 
 
 @Composable
@@ -49,6 +55,15 @@ fun ConfiguracionScreen(
     navegarToDashboard: () -> Unit,
     cerrarSesion: () -> Unit
 ) {
+
+    var alerta by remember { mutableStateOf<Pair<String, AlertaTipo>?>(null) }
+    LaunchedEffect(Unit) {
+        viewModel.mensajeUI.collect { mensaje ->
+            alerta = mensaje
+        }
+    }
+
+
     LaunchedEffect(Unit) {
         viewModel.navigationEvent.collect { event ->
             when (event) {
@@ -57,6 +72,7 @@ fun ConfiguracionScreen(
             }
         }
     }
+
     Container(
         showEncabezado = true,
         showBackButton = true,
@@ -65,20 +81,43 @@ fun ConfiguracionScreen(
     ) {
         Configuracion(viewModel = viewModel,cierraSesion = cerrarSesion)
     }
+
+
+    // Snackbar personalizado
+    alerta?.let { (msg, tipo) ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            AlertaSnackBar(
+                message = msg,
+                type = tipo,
+                onDismiss = { alerta = null },
+                modifier = Modifier.zIndex(1f)
+            )
+        }
+    }
 }
 
 @Composable
 fun Configuracion(viewModel : ConfiguracionViewModel, cierraSesion:()-> Unit) {
-
+    val state by viewModel.state.observeAsState(ConfiguracionState())
     Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+        val estadoNotificaciones by viewModel.notificacionesActivas.collectAsState()
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             GeneralLbl(texto = "Activar notificaciones", tamano = 18.sp)
-            EstadoChange()
+            Switch(
+                checked = estadoNotificaciones,
+                onCheckedChange = { viewModel.cambiarEstadoNotificaciones(it) }
+            )
         }
+
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -94,54 +133,60 @@ fun Configuracion(viewModel : ConfiguracionViewModel, cierraSesion:()-> Unit) {
         )
         //SeleccionHora()
         SeleccionHoraVisual()
-
-        Box(
-            modifier = Modifier
-                .padding(top = 10.dp, bottom = 15.dp)
-                .fillMaxWidth()
-                .clip(RoundedCornerShape(10))
-                .background(Color(0x5C359B94))
-
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 15.dp, vertical = 15.dp)
-            ) {
-                GeneralLbl(
-                    texto = "Modificar Perfil",
-                    tamano = 20.sp,
-                    modifier = Modifier.fillMaxWidth(),
-                    alineacionTexto = TextAlign.Center
-                )
-                TxtFieldGeneral(
-
-                    valor = "",
-                    etiqueta = "Usuario",
-                    placeholderTexto = "Ejemplo:user123",
-                ) {}
-                TxtFieldGeneral(
-                    valor = "",
-                    etiqueta = "Correo",
-                    placeholderTexto = "Ejemplo@gmail.com",
-                ) {}
-                TxtFieldGeneral(
-                    valor = "",
-                    etiqueta = "Contrasena",
-                    placeholderTexto = "Ejemplo:Ejemplo123!",
-                ) {}
-                Spacer(Modifier.height(15.dp))
-                BotonBox(modifier = Modifier, "Guardar", background = 0xFF41837B)
-            }
-
-        }
-        BotonBox(modifier = Modifier.clickable{viewModel.onEvent(ConfiguracionEvent.btnCerrarSesionClicked)}, texto = "Cerrar sesion", background = 0xFFB70000)
+        FormularioActualizar(state,viewModel)
+        BotonBox(texto = "Cerrar sesion", background = 0xFFB70000){viewModel.onEvent(ConfiguracionEvent.btnCerrarSesionClicked)}
         Spacer(Modifier.height(35.dp))
     }
 
 
 }
+@Composable
+fun FormularioActualizar(state: ConfiguracionState,viewModel: ConfiguracionViewModel){
 
+    Box(
+        modifier = Modifier
+            .padding(top = 10.dp, bottom = 15.dp)
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(10))
+            .background(Color(0x5C359B94))
+
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 15.dp, vertical = 15.dp)
+        ) {
+            GeneralLbl(
+                texto = "Cambia tu contrasena",
+                tamano = 20.sp,
+                modifier = Modifier.fillMaxWidth(),
+                alineacionTexto = TextAlign.Center
+            )
+            TxtFieldGeneral(
+                valor = state.correo,
+                etiqueta = "Correo",
+                placeholderTexto = "Ejemplo@gmail.com",
+            ) {viewModel.onEvent(ConfiguracionEvent.correoChanged(it))}
+            TxtFieldGeneral(
+                valor = state.contrasena,
+                etiqueta = "Contrasena",
+                placeholderTexto = "Ejemplo:Ejemplo123!",
+            ) {viewModel.onEvent(ConfiguracionEvent.contrasenaChanged(it))}
+            TxtFieldGeneral(
+                valor = state.confirmarContrasena,
+                etiqueta = "Confirma contrasena",
+                placeholderTexto = "Ejemplo:Ejemplo123!"
+            ) {viewModel.onEvent(ConfiguracionEvent.confirmarContrasenaChanged(it))}
+            Spacer(Modifier.height(15.dp))
+            BotonBox(
+                modifier = Modifier,
+                "Guardar",
+                background = 0xFF41837B)
+            {viewModel.onEvent(ConfiguracionEvent.btnActualizarClicked)}
+        }
+
+    }
+}
 @Composable
 fun GeneralLbl(
     texto: String = "",
@@ -166,34 +211,16 @@ fun EstadoChange() {
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun SeleccionHora() {
-    val state = rememberTimePickerState()
-    TimePicker(
-        state = state,
-        modifier = Modifier
-            .padding(15.dp)
-            .fillMaxWidth(),
-        colors = TimePickerDefaults.colors(),
-        layoutType = TimePickerDefaults.layoutType()
-    )
-    Text(
-        text = "Hora seleccionada H:M = ${state.hour} : ${state.minute}",
-        modifier = Modifier.fillMaxWidth(),
-        textAlign = TextAlign.Center
-    )
-}
 
 @Composable
-fun BotonBox(modifier: Modifier, texto: String, background: Long) {
+fun BotonBox(modifier: Modifier= Modifier, texto: String, background: Long, onClick: () -> Unit) {
     Box(
         modifier = modifier
             .fillMaxWidth()
             .height(50.dp)
             .clip(shape = RoundedCornerShape(40))
             .background(Color(background))
-            .clickable { print("holo") },
+            .clickable { onClick() },
     ) {
         Box(
             modifier

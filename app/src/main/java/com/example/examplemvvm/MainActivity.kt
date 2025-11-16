@@ -19,23 +19,32 @@ class MainActivity : ComponentActivity() {
     private val splashViewModel: SplashViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // Mantiene la splash automática visible mientras carga sesión
         installSplashScreen().setKeepOnScreenCondition {
             splashViewModel.isLoading.value
         }
         super.onCreate(savedInstanceState)
+
+        val destino = intent?.getStringExtra("destino")
+
         setContent {
             ExampleMVVMTheme {
                 val haySesion by splashViewModel.haySesion.collectAsState()
 
                 haySesion?.let { tieneSesion ->
-                    val startDestination = if (tieneSesion) Screens.DASHBOARD else Screens.LOGIN
+                    val startDestination = when {
+                        destino == "respira" && tieneSesion -> Screens.RESPIRACION
+                        destino == "respira" && !tieneSesion -> Screens.LOGIN
+                        tieneSesion -> Screens.DASHBOARD
+                        else -> Screens.LOGIN
+                    }
                     NavigationWrapper(startDestination = startDestination)
                 }
             }
         }
     }
 }
+
+
 
 
 

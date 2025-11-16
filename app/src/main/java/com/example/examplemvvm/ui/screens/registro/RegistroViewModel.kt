@@ -18,8 +18,9 @@ import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
-class RegistroViewModel @Inject constructor(private val usuarioRepository: UsuarioRepository) :
-    ViewModel() {
+class RegistroViewModel @Inject constructor(
+    private val usuarioRepository: UsuarioRepository
+) : ViewModel() {
 
     var state = MutableLiveData(RegistroState())
         private set

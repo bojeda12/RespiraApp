@@ -37,4 +37,12 @@ class UsuarioRepositoryImpl @Inject constructor(
     override suspend fun existeUsuarioPorCorreo(correo: String): Boolean {
         return usuarioDao.contarPorCorreo(correo) > 0
     }
+    override suspend fun actualizarContrasena(correo: String, nueva: String): Boolean {
+        return usuarioDao.actualizarContrasena(correo, nueva) > 0
+    }
+
+    override suspend fun obtenerUsuarioPorCorreo(correo: String): Usuario? {
+        return usuarioDao.obtenerUsuarioPorCorreo(correo)?.toModel()
+    }
+
 }

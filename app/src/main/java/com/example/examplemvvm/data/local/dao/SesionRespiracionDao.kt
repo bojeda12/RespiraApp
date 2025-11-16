@@ -16,5 +16,6 @@ interface SesionRespiracionDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun guardarSesion(sesion: SesionRespiracionEntity)
+
 }
 

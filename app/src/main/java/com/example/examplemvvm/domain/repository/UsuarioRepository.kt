@@ -16,5 +16,8 @@ interface UsuarioRepository {
     )
     suspend fun getUsuarios(): List<Usuario>
     suspend fun existeUsuarioPorCorreo(correo: String): Boolean
+    suspend fun actualizarContrasena(correo: String, nueva: String): Boolean
+    suspend fun obtenerUsuarioPorCorreo(correo: String): Usuario?
+
 }
 

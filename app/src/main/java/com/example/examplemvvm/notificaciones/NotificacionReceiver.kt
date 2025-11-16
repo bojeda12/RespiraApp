@@ -29,6 +29,7 @@ class NotificacionReceiver : BroadcastReceiver() {
             manager.createNotificationChannel(canal)
         }
         val intent = Intent(context, MainActivity::class.java).apply {
+            putExtra("destino", "respira")
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
 
