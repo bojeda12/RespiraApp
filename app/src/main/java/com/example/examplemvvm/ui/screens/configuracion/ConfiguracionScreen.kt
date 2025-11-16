@@ -13,9 +13,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -31,13 +33,19 @@ import com.example.examplemvvm.ui.screens.componentes.Container
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TimePickerDefaults
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.examplemvvm.ui.screens.componentes.TxtFieldGeneral
+import dagger.hilt.android.lifecycle.HiltViewModel
 
 
 @Composable
 fun ConfiguracionScreen(
-    viewModel: ConfiguracionViewModel = ConfiguracionViewModel(),
+    viewModel: ConfiguracionViewModel = hiltViewModel(),
     navegarToDashboard: () -> Unit,
     cerrarSesion: () -> Unit
 ) {
@@ -84,7 +92,9 @@ fun Configuracion(viewModel : ConfiguracionViewModel, cierraSesion:()-> Unit) {
             tamano = 18.sp,
             alineacionTexto = TextAlign.Center
         )
-        SeleccionHora()
+        //SeleccionHora()
+        SeleccionHoraVisual()
+
         Box(
             modifier = Modifier
                 .padding(top = 10.dp, bottom = 15.dp)
@@ -199,6 +209,108 @@ fun BotonBox(modifier: Modifier, texto: String, background: Long) {
 
     }
 }
+@Composable
+fun HoraCardSelector(
+    hora: Int,
+    minuto: Int,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 10.dp)
+            .clip(RoundedCornerShape(20.dp))
+            .background(Color(0xFF359B94))
+            .clickable { onClick() }
+            .padding(20.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = "Horario seleccionado",
+                fontSize = 18.sp,
+                color = Color.White
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = String.format("%02d:%02d", hora, minuto),
+                fontSize = 32.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+            Spacer(Modifier.height(4.dp))
+            Text(
+                text = "Toca para cambiar",
+                fontSize = 14.sp,
+                color = Color.White.copy(alpha = 0.7f)
+            )
+        }
+    }
+}
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HoraDialog(
+    onDismiss: () -> Unit,
+    onHoraSeleccionada: (Int, Int) -> Unit
+) {
+    val state = rememberTimePickerState()
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(onClick = {
+                onHoraSeleccionada(state.hour, state.minute)
+                onDismiss()
+            }) {
+                Text("Aceptar")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text("Cancelar")
+            }
+        },
+        title = { Text("Selecciona una hora") },
+        text = {
+            TimePicker(
+                state = state,
+                modifier = Modifier.fillMaxWidth(),
+                colors = TimePickerDefaults.colors(),
+                layoutType = TimePickerDefaults.layoutType()
+            )
+        }
+    )
+}
+@Composable
+fun SeleccionHoraVisual(viewModel: ConfiguracionViewModel = hiltViewModel()) {
+    val context = LocalContext.current
+    val showDialog = remember { mutableStateOf(false) }
+    // Observar el valor guardado desde DataStore
+    val horarioGuardado by viewModel.horarioGuardado.collectAsState()
+
+    // Parsear hora y minuto desde el string guardado
+    val (hora, minuto) = horarioGuardado.split(":").map { it.toInt() }
+
+    HoraCardSelector(
+        hora = hora,
+        minuto = minuto,
+        onClick = { showDialog.value = true }
+    )
+
+    if (showDialog.value) {
+        HoraDialog(
+            onDismiss = { showDialog.value = false },
+            onHoraSeleccionada = { h, m ->
+                viewModel.guardarHorarioRespiracion(h, m)
+                viewModel.programarRecordatorio(context, h, m)
+            }
+        )
+    }
+
+
+}
+
+
 
 
 

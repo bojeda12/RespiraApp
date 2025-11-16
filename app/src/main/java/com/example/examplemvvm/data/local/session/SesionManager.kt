@@ -25,6 +25,9 @@ class SesionManager @Inject constructor(@ApplicationContext context: Context) {
         val RUTINA_ID = intPreferencesKey("rutina_id")
 
         val RUTINA_HORA_INICIO = longPreferencesKey("rutina_hora_inicio")
+        val HORARIO_KEY = stringPreferencesKey("horario_respiracion")
+
+
 
     }
 
@@ -57,6 +60,20 @@ class SesionManager @Inject constructor(@ApplicationContext context: Context) {
     // Flow que expone el id de la rutina (puede ser null si no existe)
     val rutinaId: Flow<Int?> = appContext.dataStore.data
         .map { it[RUTINA_ID] }
+
+    // Leer el horario guardado
+    val horarioRespiracion: Flow<String> = appContext.dataStore.data
+        .map { preferences ->
+            preferences[HORARIO_KEY] ?: "18:00" // valor por defecto
+        }
+
+    // Guardar el horario
+    suspend fun guardarHorarioRespiracion(hora: String) {
+        appContext.dataStore.edit { preferences ->
+            preferences[HORARIO_KEY] = hora
+        }
+    }
+
 
 
 }
