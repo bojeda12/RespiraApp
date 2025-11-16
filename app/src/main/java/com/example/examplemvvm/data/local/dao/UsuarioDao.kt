@@ -20,4 +20,11 @@ interface UsuarioDao {
 
     @Query("SELECT COUNT(*) FROM usuario WHERE correo = :correo")
     suspend fun contarPorCorreo(correo: String): Int
+    @Query("UPDATE usuario SET contrasena = :nueva WHERE correo = :correo")
+    suspend fun actualizarContrasena(correo: String, nueva: String): Int
+
+    @Query("SELECT * FROM usuario WHERE correo = :correo LIMIT 1")
+    suspend fun obtenerUsuarioPorCorreo(correo: String): UsuarioEntity?
+
+
 }

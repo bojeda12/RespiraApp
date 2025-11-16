@@ -1,6 +1,7 @@
 package com.example.examplemvvm.data.local.session
 
 import android.content.Context
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
@@ -26,6 +27,8 @@ class SesionManager @Inject constructor(@ApplicationContext context: Context) {
 
         val RUTINA_HORA_INICIO = longPreferencesKey("rutina_hora_inicio")
         val HORARIO_KEY = stringPreferencesKey("horario_respiracion")
+        val NOTIFICACIONES_ACTIVAS_KEY = booleanPreferencesKey("notificaciones_activas")
+
 
 
 
@@ -73,6 +76,16 @@ class SesionManager @Inject constructor(@ApplicationContext context: Context) {
             preferences[HORARIO_KEY] = hora
         }
     }
+
+    //funcion que nos sirve para saber si estan activas o no las notificaciones
+    val notificacionesActivas: Flow<Boolean> = context.dataStore.data
+        .map { it[NOTIFICACIONES_ACTIVAS_KEY] ?: true }
+
+    suspend fun guardarNotificacionesActivas(activo: Boolean) {
+        appContext.dataStore.edit { it[NOTIFICACIONES_ACTIVAS_KEY] = activo }
+    }
+
+
 
 
 
