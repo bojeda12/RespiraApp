@@ -51,6 +51,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.gms.play.services.wearable)
     val room_version = "2.8.3"
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -112,9 +113,6 @@ dependencies {
     implementation("androidx.compose.foundation:foundation:1.5.0")
     // se usa para que no se muestre la splash por defecto de android
     implementation("androidx.core:core-splashscreen:1.0.1")
-
-
-
 
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
