@@ -1,9 +1,10 @@
 package com.example.examplemvvm.domain.repository
 
 import com.example.examplemvvm.domain.model.RegistroEstadoAnimo
+import kotlinx.coroutines.flow.Flow
 
 interface EstadoAnimoRepository {
-    suspend fun obtenerUltimoRegistro(idUsuario: Int): RegistroEstadoAnimo?
+    fun obtenerUltimoRegistro(idUsuario: Int): Flow<RegistroEstadoAnimo?>
 
     suspend fun registrarEstado(registro: RegistroEstadoAnimo)
 

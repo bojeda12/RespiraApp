@@ -19,13 +19,20 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import com.example.examplemvvm.R
 import com.example.examplemvvm.data.local.dao.RegistroEstadoAnimoDao
+import com.example.examplemvvm.domain.model.RegistroEstadoAnimo
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import java.time.DayOfWeek
 import java.time.LocalDate
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
 //import javax.inject.Inject
+
+
 
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
@@ -76,6 +83,51 @@ class DashboardViewModel @Inject constructor(
             }
         }
     }
+    private val ultimoEstadoRegistro = sesionManager.idUsuario
+        .filterNotNull()
+        .flatMapLatest { id ->
+            // flatMapLatest asegura que el flujo de datos no esté anidado.
+            estadoAnimoRepository.obtenerUltimoRegistro(id)
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = null
+        )
+
+    // 🟢 StateFlow para el Texto del Estado
+    val ultimoEstadoTexto: StateFlow<String> = ultimoEstadoRegistro.map { registro ->
+        when (registro?.estadoAnimo) {
+            "5" -> "Muy bien"
+            "4" -> "Bien"
+            "3" -> "Neutro"
+            "2" -> "Mal"
+            "1" -> "Muy Mal"
+            else -> "Sin registro"
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Eagerly,
+        initialValue = "Cargando..."
+    )
+
+    // 🟢 StateFlow para el Icono del Estado
+    val ultimoEstadoIcono: StateFlow<Int> = ultimoEstadoRegistro.map { registro ->
+        when (registro?.estadoAnimo) {
+            "5" -> R.drawable.happyface
+            "4" -> R.drawable.happy
+            "3" -> R.drawable.confused
+            "2" -> R.drawable.sad
+            "1" -> R.drawable.sadface
+            else -> R.drawable.estadoa
+        }
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Eagerly,
+        initialValue = R.drawable.confused
+    )
+
+    /*
     val ultimoEstadoTexto = MutableStateFlow("")
     val ultimoEstadoIcono = MutableStateFlow(R.drawable.confused)
     init {
@@ -113,7 +165,7 @@ class DashboardViewModel @Inject constructor(
                 }
             }
         }
-    }
+    }*/
 
     //Cargar estados de la grafica
     private val _moodsByDay = MutableStateFlow(List(7) { 0 }) // Lunes a Domingo

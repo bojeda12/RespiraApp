@@ -7,13 +7,14 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.examplemvvm.data.local.entities.RegistroEstadoAnimoEntity
 import com.example.examplemvvm.domain.model.EstadoFrecuenteDia
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface RegistroEstadoAnimoDao {
     //@Query("SELECT * FROM registroestadoanimo WHERE id_usuario = :usuarioId")
     //suspend fun getRegistrosByUsuario(usuarioId: Int): List<RegistroEstadoAnimoEntity>
     @Query("SELECT * FROM registroestadoanimo WHERE id_usuario = :idUsuario ORDER BY id DESC LIMIT 1")
-    suspend fun obtenerUltimoEstado(idUsuario: Int): RegistroEstadoAnimoEntity?
+    fun obtenerUltimoEstado(idUsuario: Int): Flow<RegistroEstadoAnimoEntity?>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertarEstado(estado: RegistroEstadoAnimoEntity)
