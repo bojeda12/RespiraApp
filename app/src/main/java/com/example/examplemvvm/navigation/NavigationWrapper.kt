@@ -8,7 +8,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.examplemvvm.ui.screens.configuracion.ConfiguracionScreen
 import com.example.examplemvvm.ui.screens.dashboard.DashboardScreen
 import com.example.examplemvvm.ui.screens.estado.EstadoScreen
-import com.example.examplemvvm.ui.screens.historial.HistorialScreen
+import com.example.examplemvvm.ui.screens.historial.RecomendacionScreen
 
 import com.example.examplemvvm.ui.screens.registro.RegistroScreen
 import com.example.examplemvvm.ui.screens.respira.RespiraScreen
@@ -84,7 +84,7 @@ fun NavigationWrapper(startDestination: String) {
 
         }
         composable(Screens.HISTORIAL) {
-            HistorialScreen(goToDashboard = { navController.navigate(Screens.DASHBOARD) } )
+            RecomendacionScreen(goToDashboard = { navController.navigate(Screens.DASHBOARD) } )
         }
         composable(Screens.SPLASH) {
             SplashScreen(navController = navController)

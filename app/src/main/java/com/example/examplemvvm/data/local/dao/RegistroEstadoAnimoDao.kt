@@ -11,8 +11,8 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface RegistroEstadoAnimoDao {
-    //@Query("SELECT * FROM registroestadoanimo WHERE id_usuario = :usuarioId")
-    //suspend fun getRegistrosByUsuario(usuarioId: Int): List<RegistroEstadoAnimoEntity>
+    @Query("SELECT * FROM registroestadoanimo WHERE id_usuario = :usuarioId")
+    suspend fun obtenerEstadosUsuario(usuarioId: Int): List<RegistroEstadoAnimoEntity>
     @Query("SELECT * FROM registroestadoanimo WHERE id_usuario = :idUsuario ORDER BY id DESC LIMIT 1")
     fun obtenerUltimoEstado(idUsuario: Int): Flow<RegistroEstadoAnimoEntity?>
 
