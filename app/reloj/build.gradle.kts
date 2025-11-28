@@ -59,7 +59,9 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
     implementation("com.google.android.gms:play-services-wearable:18.1.0")
-
+    //implementaciones para recibir JSON
+    implementation("com.google.code.gson:gson:2.10.1")
+    implementation("com.google.android.gms:play-services-wearable:18.1.0")
 
 
     implementation(libs.play.services.wearable)

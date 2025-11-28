@@ -94,7 +94,7 @@ class LoginViewModel @Inject constructor(
                 valido = false
             }
 
-            //en caso de que no haya errores continuamos
+            //este if me regresa falso o verdadero dependiendo de los if de arriba
             if (!valido) return@launch
 
             //Buscamos el usuaio en la base de datos

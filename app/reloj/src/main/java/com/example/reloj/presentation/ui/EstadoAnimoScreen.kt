@@ -35,9 +35,9 @@ fun EstadoAnimoScreen() {
                         }
                     },
                     modifier = Modifier.fillMaxWidth(0.9f),
-                    colors = ButtonDefaults.buttonColors(Color(0xFF359B94))
+                    colors = ButtonDefaults.buttonColors(Color(0xFFB2D8B5))
                 ) {
-                    Text(item)
+                    Text(item, color = Color.Black)
                 }
             }
         }

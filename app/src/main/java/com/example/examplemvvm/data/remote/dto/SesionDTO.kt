@@ -5,7 +5,7 @@ data class SesionDTO(
     val rutinaId: Int,
     val duracionSegundos: Int,
     val estadoAnimo: Int,
-    val horaDelDia: String,
+    val horaDelDia: Double,
     val fecha: String
 )
 

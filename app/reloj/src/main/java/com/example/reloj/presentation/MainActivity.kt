@@ -1,14 +1,11 @@
-/* While this template provides a good starting point for using Wear Compose, you can always
- * take a look at https://github.com/android/wear-os-samples/tree/main/ComposeStarter to find the
- * most up to date changes to the libraries and their usages.
- */
-
 package com.example.reloj.presentation.ui
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-
+import com.example.reloj.presentation.sync.SugerenciasReceiver
+import com.google.android.gms.wearable.Wearable
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,6 +14,16 @@ class MainActivity : ComponentActivity() {
             WearApp()
         }
     }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("MainActivity", "onResume → registrando listener")
+        Wearable.getMessageClient(this).addListener(SugerenciasReceiver)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d("MainActivity", "onPause → quitando listener")
+        Wearable.getMessageClient(this).removeListener(SugerenciasReceiver)
+    }
 }
-
-

@@ -108,8 +108,6 @@ fun Dashboard(
         LaunchedEffect(Unit) {
             viewModel.cargarEstadoFrecuenteSemanaActual()
         }
-
-
         BienvenidaLabel(nombre)
         UltimoEstadoAnimo(viewModel)
         Spacer(Modifier.height(20.dp))
@@ -123,16 +121,9 @@ fun Dashboard(
             "Elegir Rutina",
             painterResource(id = R.drawable.rutina)
         ){viewModel.onEvent(DashboardEvent.BtnRespiracionRutinaClicked)}
-        /*Etiquetas(
-            texto = "Rutinas de respiracion rapidas",
-            modifier = Modifier,
-            tamanoLetra = 18.sp
-        )
-       // RutinasRapidas(){viewModel.onEvent(DashboardEvent.BtnRutina1Clicked)}*/
-        //Etiquetas(texto = "Historial", modifier = Modifier.clickable {viewModel.onEvent(DashboardEvent.BtnHistorialClicked)}, tamanoLetra = 18.sp)
         Spacer(Modifier.height(15.dp))
         BotonBox(modifier = Modifier,
-            "Historial",
+            "Recomendaciones",
             painterResource(id = R.drawable.historial)
         ){viewModel.onEvent(DashboardEvent.BtnHistorialClicked)}
         Spacer(Modifier.height(30.dp))
@@ -143,13 +134,6 @@ fun Dashboard(
         } else {
             Grafica(moodsByDay = moods)
         }
-
-
-        Etiquetas(
-            texto = "Horario recomendado para respirar: 6:00 PM",
-            modifier = Modifier,
-            tamanoLetra = 18.sp
-        )
     }
 
 

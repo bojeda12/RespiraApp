@@ -27,7 +27,7 @@ fun WearApp() {
                     EstadoAnimoScreen()
                 }
                 composable("recomendacion") {
-
+                    SugerenciasScreen()
                 }
             }
         }

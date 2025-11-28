@@ -15,7 +15,8 @@ private val LightColors = lightColorScheme(
     background = BackgroundLight,
     onBackground = OnDark,
     surface = SurfaceLight,
-    onSurface = OnDark
+    onSurface = OnDark,
+    errorContainer = OnError
 )
 
 @Composable

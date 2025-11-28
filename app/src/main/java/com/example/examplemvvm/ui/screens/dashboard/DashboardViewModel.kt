@@ -111,7 +111,7 @@ class DashboardViewModel @Inject constructor(
         initialValue = "Cargando..."
     )
 
-    // 🟢 StateFlow para el Icono del Estado
+    // StateFlow para el Icono del Estado
     val ultimoEstadoIcono: StateFlow<Int> = ultimoEstadoRegistro.map { registro ->
         when (registro?.estadoAnimo) {
             "5" -> R.drawable.happyface

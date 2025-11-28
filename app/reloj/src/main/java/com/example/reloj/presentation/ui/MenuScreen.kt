@@ -1,10 +1,12 @@
 package com.example.reloj.presentation.ui
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.wear.compose.material3.Button
@@ -20,19 +22,22 @@ fun MenuPrincipalScreen(navController: NavHostController) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
+        // Botón para registrar estado
         Button(
-            onClick = { navController.navigate("estado") }
+            onClick = { navController.navigate("estado") },
+            colors = ButtonDefaults.buttonColors(Color(0xFFB2D8B5))
         ) {
-            Text("Registrar estado")
+            Text("Registrar estado", style = MaterialTheme.typography.bodyLarge,color = Color.Black)
         }
 
-        Spacer(Modifier.height(15.dp))
+        Spacer(Modifier.height(5.dp))
 
+        // Botón para ver recomendaciones
         Button(
-            onClick = { navController.navigate("recomendacion") }
+            onClick = { navController.navigate("recomendacion") },
+            colors = ButtonDefaults.buttonColors(Color(0xFFB2D8B5))
         ) {
-            Text("Ver recomendación")
+            Text("Ver recomendación", style = MaterialTheme.typography.bodyLarge,color = Color.Black)
         }
     }
 }
